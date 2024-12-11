@@ -302,6 +302,7 @@ const RegularAvereCard = () => {
         isOpen={isVerbTreeOpen}
         onClose={onVerbTreeClose}
         tense={tense as "presenteIndicativo" | "passatoProssimo"}  // Pass the tense here
+        verbType={verb.type as "are" | "ere" | "ire" | "pronounRoot" | "irregular"}
       />
 
         {/* <PassatoProssimoLesson ref={lessonModalRef} /> */}

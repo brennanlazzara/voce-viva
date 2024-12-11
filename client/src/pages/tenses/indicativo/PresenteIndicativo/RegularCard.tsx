@@ -282,7 +282,8 @@ const RegularCard = () => {
           title="Verb Tree Graphs"
           isOpen={isVerbTreeOpen}
           onClose={onVerbTreeClose}
-          tense={tense as "presenteIndicativo" | "passatoProssimo"} // Pass the tense here
+          tense={tense as "presenteIndicativo" | "passatoProssimo"}
+          verbType={verbType as "are" | "ere" | "ire" | "pronounRoot" | "irregular"}
         />
         <PresenteIndicativoLesson ref={lessonModalRef} />
       </VStack>
