@@ -174,6 +174,16 @@ const verbData = {
       auxiliaryVerb: "avere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "cerco",
+          tu: "cerchi",
+          luiLei: "cerca",
+          noi: "cerchiamo",
+          voi: "cercate",
+          loro: "cercano"
+        }
+      }
     },
     {
       infinitive: "incontrare",
@@ -293,6 +303,16 @@ const verbData = {
       auxiliaryVerb: "essere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "vado",
+          tu: "vai",
+          luiLei: "va",
+          noi: "andiamo",
+          voi: "andate",
+          loro: "vanno"
+        }
+      }
     },
     {
       infinitive: "dare",
@@ -300,6 +320,16 @@ const verbData = {
       auxiliaryVerb: "avere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "do",
+          tu: "dai",
+          luiLei: "dà",
+          noi: "diamo",
+          voi: "date",
+          loro: "danno"
+        }
+      }
     },
     {
       infinitive: "stare",
@@ -307,6 +337,16 @@ const verbData = {
       auxiliaryVerb: "essere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "sto",
+          tu: "stai",
+          luiLei: "sta",
+          noi: "stiamo",
+          voi: "state",
+          loro: "stanno"
+        }
+      }
     },
   ],
   ereVerbs: [
@@ -330,6 +370,16 @@ const verbData = {
       auxiliaryVerb: "avere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: false,
+      conjugations: {
+        presenteIndicativo: {
+          io: "leggo",
+          tu: "leggi",
+          luiLei: "legge",
+          noi: "leggiamo",
+          voi: "leggete",
+          loro: "leggono"
+        }
+      }
     },
     {
       infinitive: "mettere",
@@ -421,6 +471,16 @@ const verbData = {
       auxiliaryVerb: "avere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "so",
+          tu: "sai",
+          luiLei: "sa",
+          noi: "sappiamo",
+          voi: "sapete",
+          loro: "sanno"
+        }
+      }
     },
     {
       infinitive: "rimanere",
@@ -428,6 +488,16 @@ const verbData = {
       auxiliaryVerb: "essere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: false,
+      conjugations: {
+        presenteIndicativo: {
+          io: "rimango",
+          tu: "rimani",
+          luiLei: "rimane",
+          noi: "rimaniamo",
+          voi: "rimanete",
+          loro: "rimangono"
+        }
+      }
     },
   ],
   ireVerbs: [
@@ -598,6 +668,16 @@ const verbData = {
       auxiliaryVerb: "essere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "vengo",
+          tu: "vieni",
+          luiLei: "viene",
+          noi: "veniamo",
+          voi: "venite",
+          loro: "vengono"
+        }
+      }
     },
     {
       infinitive: "uscire",
@@ -605,6 +685,16 @@ const verbData = {
       auxiliaryVerb: "essere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "esco",
+          tu: "esci",
+          luiLei: "esce",
+          noi: "usciamo",
+          voi: "uscite",
+          loro: "escono"
+        }
+      }
     },
     {
       infinitive: "dire",
@@ -612,6 +702,16 @@ const verbData = {
       auxiliaryVerb: "avere",
       regularPresenteIndicativo: false,
       regularPassatoProssimo: true,
+      conjugations: {
+        presenteIndicativo: {
+          io: "dico",
+          tu: "dici",
+          luiLei: "dice",
+          noi: "diciamo",
+          voi: "dite",
+          loro: "dicono"
+        }
+      }
     },
   ],
 };

@@ -3,13 +3,28 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IVerb extends Document {
   infinitive: string;
   type: "are" | "ere" | "ire";
-  conjugations: {
-    io: string;
-    tu: string;
-    lui_lei: string;
-    noi: string;
-    voi: string;
-    loro: string;
+  definition: string;
+  auxiliaryVerb: "avere" | "essere";
+  regularPresenteIndicativo: boolean;
+  regularPassatoProssimo: boolean;
+  conjugations?: {
+    presenteIndicativo?: {
+      io: string;
+      tu: string;
+      luiLei: string;
+      noi: string;
+      voi: string;
+      loro: string;
+    };
+    // Future tenses can be added here
+    imperfetto?: {
+      io: string;
+      tu: string;
+      luiLei: string;
+      noi: string;
+      voi: string;
+      loro: string;
+    };
   };
 }
 
@@ -20,6 +35,10 @@ const VerbSchema = new mongoose.Schema({
   auxiliaryVerb: { type: String, enum: ["avere", "essere"], required: true },
   regularPresenteIndicativo: { type: Boolean, required: true },
   regularPassatoProssimo: { type: Boolean, required: true },
+  conjugations: {
+    type: mongoose.Schema.Types.Mixed,
+    required: false
+  }
 });
 
 export default mongoose.model<IVerb>("Verb", VerbSchema);
