@@ -215,10 +215,13 @@ const Home = () => {
               {quickActions.map((action) => (
                 <Card
                   key={action.title}
+                  as={action.available ? RouterLink : "div"}
+                  to={action.available ? action.path : undefined}
                   variant="outline"
                   borderColor={borderColor}
                   opacity={action.available ? 1 : 0.6}
                   position="relative"
+                  cursor={action.available ? "pointer" : "default"}
                   _hover={
                     action.available
                       ? {
@@ -252,19 +255,6 @@ const Home = () => {
                     <Text fontSize="xs" color={textColor}>
                       {action.description}
                     </Text>
-                    {action.available && (
-                      <Button
-                        as={RouterLink}
-                        to={action.path}
-                        size="sm"
-                        colorScheme={action.color}
-                        variant="ghost"
-                        mt={2}
-                        width="full"
-                      >
-                        Start
-                      </Button>
-                    )}
                   </CardBody>
                 </Card>
               ))}
