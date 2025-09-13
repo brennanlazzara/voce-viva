@@ -18,8 +18,9 @@ import { motion } from "framer-motion";
 import VerbTreeGraphDialog from "../../../../components/modals/VerbTreeGraphDialog";
 import HintDialog from "../../../../components/modals/HintDialog";
 import PresenteIndicativoLesson from "../../../../components/modals/PresenteIndicativoLesson";
+import { useVerbData } from "../../../../hooks/useVerbData";
 
-const RegularCard = () => {
+const IrregularCard = () => {
   const [tense] = useState("presenteIndicativo");
   const [pronoun, setPronoun] = useState("");
   const [verb, setVerb] = useState("");
@@ -29,7 +30,8 @@ const RegularCard = () => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hasFlippedOnce, setHasFlippedOnce] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { fetchRandomPronoun, fetchRandomVerb, isLoading } = useVerbData();
   const {
     isOpen: isHintOpen,
     onOpen: onHintOpen,
@@ -44,62 +46,23 @@ const RegularCard = () => {
   const lessonModalRef = useRef<{ onLessonModalOpen: () => void }>(null);
 
   useEffect(() => {
-    fetchRandomPronoun();
-    fetchRandomVerb();
+    loadNewCard();
   }, []);
 
-  const fetchRandomPronoun = async () => {
-    setIsLoading(true);
+  const loadNewCard = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_LOCAL_URL}/api/pronouns/random/subject`
-      );
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-      const data = await response.json();
-      if (data && data.pronouns && data.pronouns.length > 0) {
-        const randomIndex = Math.floor(Math.random() * data.pronouns.length);
-        setPronoun(data.pronouns[randomIndex]);
-      } else {
-        throw new Error("No pronouns data received");
-      }
-    } catch (error) {
-      console.error("Error fetching random pronoun:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      // Fetch pronoun and irregular verb in parallel
+      const [pronounData, verbData] = await Promise.all([
+        fetchRandomPronoun(),
+        fetchRandomVerb({ regularOnly: false }),
+      ]);
 
-  const fetchRandomVerb = async () => {
-    setIsLoading(true);
-    try {
-      let isIrregular = false;
-      let data = null;
-
-      while (!isIrregular) {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_LOCAL_URL}/api/verbs/random`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        data = await response.json();
-        if (data.regularPresenteIndicativo === false) {
-          isIrregular = true;
-          setVerb(data.infinitive);
-          setVerbType(data.type);
-          setVerbDefinition(data.definition);
-        } else {
-          console.log(
-            "Fetched verb does not meet the criteria of regularPresenteIndicativo: false"
-          );
-        }
-      }
+      setPronoun(pronounData);
+      setVerb(verbData.infinitive);
+      setVerbType(verbData.type);
+      setVerbDefinition(verbData.definition);
     } catch (error) {
-      console.error("Error fetching random verb:", error);
-    } finally {
-      setIsLoading(false);
+      console.error("Error loading new card:", error);
     }
   };
 
@@ -227,8 +190,7 @@ const RegularCard = () => {
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
   const getNewCard = () => {
-    fetchRandomPronoun();
-    fetchRandomVerb();
+    loadNewCard();
     setIsFlipped(false);
     setUserAnswer("");
     setIsCorrect(null);
@@ -370,4 +332,4 @@ const RegularCard = () => {
   );
 };
 
-export default RegularCard;
+export default IrregularCard;
