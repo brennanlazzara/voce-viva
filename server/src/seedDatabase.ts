@@ -158,7 +158,7 @@ const verbData = {
       infinitive: "pagare",
       definition: "to pay",
       auxiliaryVerb: "avere",
-      regularPresenteIndicativo: false,
+      regularPresenteIndicativo: true,
       regularPassatoProssimo: true,
     },
     {
