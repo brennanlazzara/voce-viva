@@ -219,7 +219,7 @@ const verbData = {
     },
     {
       infinitive: "abitare",
-      definition: "to live",
+      definition: "to live (reside)",
       auxiliaryVerb: "avere",
       regularPresenteIndicativo: true,
       regularPassatoProssimo: true,
@@ -433,7 +433,7 @@ const verbData = {
   ireVerbs: [
     {
       infinitive: "partire",
-      definition: "to leave",
+      definition: "to depart",
       auxiliaryVerb: "essere",
       regularPresenteIndicativo: true,
       regularPassatoProssimo: true,
@@ -531,7 +531,7 @@ const verbData = {
     },
     {
       infinitive: "restituire",
-      definition: "to return",
+      definition: "to return (give back)",
       auxiliaryVerb: "avere",
       regularPresenteIndicativo: true,
       regularPassatoProssimo: true,
