@@ -744,6 +744,7 @@ const seedDatabase = async () => {
         auxiliaryVerb: verb.auxiliaryVerb,
         regularPresenteIndicativo: verb.regularPresenteIndicativo,
         regularPassatoProssimo: verb.regularPassatoProssimo,
+        ...(verb.conjugations && { conjugations: verb.conjugations }),
       })),
       ...verbData.ereVerbs.map((verb) => ({
         infinitive: verb.infinitive,
@@ -752,6 +753,7 @@ const seedDatabase = async () => {
         auxiliaryVerb: verb.auxiliaryVerb,
         regularPresenteIndicativo: verb.regularPresenteIndicativo,
         regularPassatoProssimo: verb.regularPassatoProssimo,
+        ...(verb.conjugations && { conjugations: verb.conjugations }),
       })),
       ...verbData.ireVerbs.map((verb) => ({
         infinitive: verb.infinitive,
@@ -760,6 +762,7 @@ const seedDatabase = async () => {
         auxiliaryVerb: verb.auxiliaryVerb,
         regularPresenteIndicativo: verb.regularPresenteIndicativo,
         regularPassatoProssimo: verb.regularPassatoProssimo,
+        ...(verb.conjugations && { conjugations: verb.conjugations }),
       })),
     ];
 
