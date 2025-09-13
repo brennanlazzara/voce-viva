@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -17,6 +17,7 @@ import {
   useColorModeValue,
   Flex,
   Divider,
+  Spinner,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import {
@@ -28,7 +29,9 @@ import {
   FaLanguage,
   FaLock,
   FaCheckCircle,
+  FaRedo,
 } from "react-icons/fa";
+import { useVerbData } from "../hooks/useVerbData";
 
 const Home = () => {
   const cardBg = useColorModeValue("white", "gray.700");
@@ -37,12 +40,30 @@ const Home = () => {
   const headingColor = useColorModeValue("gray.700", "gray.200");
   const progressBg = useColorModeValue("gray.100", "gray.600");
 
+  // Verb of the day state
+  const [verbOfDay, setVerbOfDay] = useState(null);
+  const { fetchRandomVerb, isLoading } = useVerbData();
+
   // Mock data - this will be replaced with real data later
   const learningStats = {
     verbsLearned: 12,
     totalVerbs: 76,
     currentStreak: 3,
     lessonsCompleted: 1,
+  };
+
+  // Load verb of the day on component mount
+  useEffect(() => {
+    loadVerbOfDay();
+  }, []);
+
+  const loadVerbOfDay = async () => {
+    try {
+      const verbData = await fetchRandomVerb();
+      setVerbOfDay(verbData);
+    } catch (error) {
+      console.error("Error loading verb of day:", error);
+    }
   };
 
   const tenseProgress = [
@@ -274,20 +295,58 @@ const Home = () => {
         <CardBody>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
             <Box>
-              <Text fontWeight="semibold" mb={2} color={headingColor}>
-                Verb of the Day
-              </Text>
+              <Flex justify="space-between" align="center" mb={2}>
+                <Text fontWeight="semibold" color={headingColor}>
+                  Verb of the Day
+                </Text>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="blue"
+                  onClick={loadVerbOfDay}
+                  isLoading={isLoading}
+                  leftIcon={<Icon as={FaRedo} />}
+                >
+                  New Verb
+                </Button>
+              </Flex>
               <Card variant="outline" p={4}>
-                <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                  parlare
-                </Text>
-                <Text fontSize="sm" color={textColor}>
-                  to speak
-                </Text>
-                <Divider my={2} />
-                <Text fontSize="sm">
-                  <strong>Example:</strong> Io parlo italiano.
-                </Text>
+                {isLoading ? (
+                  <Flex justify="center" align="center" h="100px">
+                    <Spinner color="blue.500" />
+                  </Flex>
+                ) : verbOfDay ? (
+                  <>
+                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                      {verbOfDay.infinitive}
+                    </Text>
+                    <Text fontSize="sm" color={textColor}>
+                      {verbOfDay.definition}
+                    </Text>
+                    <Divider my={2} />
+                    <HStack spacing={4}>
+                      <Text fontSize="sm">
+                        <strong>Type:</strong> -{verbOfDay.type} verb
+                      </Text>
+                      <Text fontSize="sm">
+                        <strong>Auxiliary:</strong> {verbOfDay.auxiliaryVerb}
+                      </Text>
+                    </HStack>
+                    {verbOfDay.regularPresenteIndicativo ? (
+                      <Badge colorScheme="green" size="sm" mt={2}>
+                        Regular
+                      </Badge>
+                    ) : (
+                      <Badge colorScheme="orange" size="sm" mt={2}>
+                        Irregular
+                      </Badge>
+                    )}
+                  </>
+                ) : (
+                  <Text fontSize="sm" color={textColor}>
+                    Failed to load verb. Try again.
+                  </Text>
+                )}
               </Card>
             </Box>
 
