@@ -22,6 +22,8 @@ italian-verb-master/
 │   └── manifest.json
 │
 ├── src/
+|---|---hooks/
+        |--useVerbData.js
 │   ├── components/
 │   │   ├── Header.tsx
 │   │   └── VerbConjugationCard.tsx
