@@ -17,7 +17,7 @@ import {
 import { motion } from "framer-motion";
 import VerbTreeGraphDialog from "../../../../components/modals/VerbTreeGraphDialog";
 import HintDialog from "../../../../components/modals/HintDialog";
-import PresenteIndicativoLesson from "../../../../components/modals/PresenteIndicativoLesson";
+import PresenteIndicativoLesson, { PresenteIndicativoLessonHandle } from "../../../../components/modals/PresenteIndicativoLesson";
 import { useVerbData } from "../../../../hooks/useVerbData";
 
 const IrregularCard = () => {
@@ -44,7 +44,7 @@ const IrregularCard = () => {
     onOpen: onVerbTreeOpen,
     onClose: onVerbTreeClose,
   } = useDisclosure();
-  const lessonModalRef = useRef<{ onLessonModalOpen: () => void }>(null);
+  const lessonModalRef = useRef<PresenteIndicativoLessonHandle>(null);
 
   useEffect(() => {
     loadNewCard();
@@ -231,7 +231,7 @@ const IrregularCard = () => {
         </Button>
         <Button
           colorScheme="green"
-          onClick={() => lessonModalRef.current?.onLessonModalOpen()}
+          onClick={() => lessonModalRef.current?.onLessonModalOpen(verb)}
         >
           A Helpful Lesson
         </Button>
