@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './config/db';
 import verbRoutes from './routes/verbRoutes';
 import pronounRoutes from './routes/pronounRoutes';
+import lessonRoutes from './routes/lessonRoutes';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use('/api/verbs', verbRoutes);
 app.use('/api/pronouns', pronounRoutes);
+app.use('/api/lessons', lessonRoutes);
 
 const PORT: string | number = process.env.PORT || 5002;
 

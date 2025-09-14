@@ -23,8 +23,11 @@ import {
   TableContainer,
   HStack,
   Badge,
+  Spinner,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
-import { irregularVerbLessons, IrregularVerbLesson, regularVerbLesson, RegularVerbLesson } from "../../data/irregularVerbLessons";
+import { useLessonData } from "../../hooks/useLessonData";
 
 interface PresenteIndicativoLessonProps {
   irregularVerb?: string;
@@ -36,14 +39,36 @@ export interface PresenteIndicativoLessonHandle {
 
 const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, PresenteIndicativoLessonProps>((props, ref) => {
   const [currentVerb, setCurrentVerb] = useState<string | null>(null);
+  const [lessonData, setLessonData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const {
     isOpen: isLessonModalOpen,
     onOpen: onLessonModalOpen,
     onClose: onLessonModalClose,
   } = useDisclosure();
 
-  const openLessonModal = (verb?: string) => {
+  const { fetchRegularLesson, fetchIrregularLesson, isLoading } = useLessonData();
+
+  const openLessonModal = async (verb?: string) => {
     setCurrentVerb(verb || null);
+    setError(null);
+    setLessonData(null);
+
+    try {
+      let data;
+      if (verb) {
+        // Fetch irregular lesson
+        data = await fetchIrregularLesson(verb, "presenteIndicativo");
+      } else {
+        // Fetch regular lesson
+        data = await fetchRegularLesson("presenteIndicativo");
+      }
+      setLessonData(data);
+    } catch (error) {
+      console.error("Failed to fetch lesson:", error);
+      setError("Failed to load lesson data. Please try again.");
+    }
+
     onLessonModalOpen();
   };
 
@@ -51,7 +76,7 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
     onLessonModalOpen: openLessonModal,
   }));
 
-  const renderIrregularLesson = (lesson: IrregularVerbLesson) => (
+  const renderIrregularLesson = (lesson: any) => (
     <VStack spacing={4} align="stretch">
       <Box>
         <Heading size="sm" color="blue.600" mb={2}>🏛️ Etymology & Why It's Irregular</Heading>
@@ -63,7 +88,7 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
       <Box>
         <Heading size="sm" color="green.600" mb={2}>🧠 Memory Tricks</Heading>
         <UnorderedList spacing={1}>
-          {lesson.memoryTricks.map((trick, index) => (
+          {lesson.memoryTricks.map((trick: string, index: number) => (
             <ListItem key={index} fontSize="sm">{trick}</ListItem>
           ))}
         </UnorderedList>
@@ -74,7 +99,7 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
       <Box>
         <Heading size="sm" color="purple.600" mb={2}>💬 Common Phrases</Heading>
         <UnorderedList spacing={1}>
-          {lesson.commonPhrases.map((phrase, index) => (
+          {lesson.commonPhrases.map((phrase: string, index: number) => (
             <ListItem key={index} fontSize="sm">{phrase}</ListItem>
           ))}
         </UnorderedList>
@@ -85,7 +110,7 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
       <Box>
         <Heading size="sm" color="red.600" mb={2}>⚠️ Common Mistakes to Avoid</Heading>
         <UnorderedList spacing={1}>
-          {lesson.learnerPitfalls.map((pitfall, index) => (
+          {lesson.learnerPitfalls.map((pitfall: string, index: number) => (
             <ListItem key={index} fontSize="sm">{pitfall}</ListItem>
           ))}
         </UnorderedList>
@@ -93,11 +118,11 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
     </VStack>
   );
 
-  const renderRegularLesson = () => (
+  const renderRegularLesson = (lesson: any) => (
     <VStack spacing={4} align="stretch">
       <Box>
         <Heading size="sm" color="blue.600" mb={2}>🔍 Pattern Recognition & How It Works</Heading>
-        <Text fontSize="sm">{regularVerbLesson.patternExplanation}</Text>
+        <Text fontSize="sm">{lesson.patternExplanation}</Text>
       </Box>
 
       <Divider />
@@ -112,19 +137,19 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
                 <Th>
                   <HStack>
                     <Badge colorScheme="green">-ARE</Badge>
-                    <Text fontSize="xs">({regularVerbLesson.conjugationExamples.are.infinitive})</Text>
+                    <Text fontSize="xs">({lesson.conjugationExamples.are.infinitive})</Text>
                   </HStack>
                 </Th>
                 <Th>
                   <HStack>
                     <Badge colorScheme="blue">-ERE</Badge>
-                    <Text fontSize="xs">({regularVerbLesson.conjugationExamples.ere.infinitive})</Text>
+                    <Text fontSize="xs">({lesson.conjugationExamples.ere.infinitive})</Text>
                   </HStack>
                 </Th>
                 <Th>
                   <HStack>
                     <Badge colorScheme="purple">-IRE</Badge>
-                    <Text fontSize="xs">({regularVerbLesson.conjugationExamples.ire.infinitive})</Text>
+                    <Text fontSize="xs">({lesson.conjugationExamples.ire.infinitive})</Text>
                   </HStack>
                 </Th>
               </Tr>
@@ -136,25 +161,25 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
                   <Td>
                     <Text color="green.600" fontWeight="medium">
                       <Text as="span" color="green.800" fontWeight="bold">
-                        {regularVerbLesson.conjugationExamples.are.stem}
+                        {lesson.conjugationExamples.are.stem}
                       </Text>
-                      {regularVerbLesson.conjugationExamples.are.conjugations[index].slice(regularVerbLesson.conjugationExamples.are.stem.length)}
+                      {lesson.conjugationExamples.are.conjugations[index].slice(lesson.conjugationExamples.are.stem.length)}
                     </Text>
                   </Td>
                   <Td>
                     <Text color="blue.600" fontWeight="medium">
                       <Text as="span" color="blue.800" fontWeight="bold">
-                        {regularVerbLesson.conjugationExamples.ere.stem}
+                        {lesson.conjugationExamples.ere.stem}
                       </Text>
-                      {regularVerbLesson.conjugationExamples.ere.conjugations[index].slice(regularVerbLesson.conjugationExamples.ere.stem.length)}
+                      {lesson.conjugationExamples.ere.conjugations[index].slice(lesson.conjugationExamples.ere.stem.length)}
                     </Text>
                   </Td>
                   <Td>
                     <Text color="purple.600" fontWeight="medium">
                       <Text as="span" color="purple.800" fontWeight="bold">
-                        {regularVerbLesson.conjugationExamples.ire.stem}
+                        {lesson.conjugationExamples.ire.stem}
                       </Text>
-                      {regularVerbLesson.conjugationExamples.ire.conjugations[index].slice(regularVerbLesson.conjugationExamples.ire.stem.length)}
+                      {lesson.conjugationExamples.ire.conjugations[index].slice(lesson.conjugationExamples.ire.stem.length)}
                     </Text>
                   </Td>
                 </Tr>
@@ -169,7 +194,7 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
       <Box>
         <Heading size="sm" color="green.600" mb={2}>🧠 Memory Tricks</Heading>
         <UnorderedList spacing={1}>
-          {regularVerbLesson.memoryTricks.map((trick, index) => (
+          {lesson.memoryTricks.map((trick: string, index: number) => (
             <ListItem key={index} fontSize="sm">{trick}</ListItem>
           ))}
         </UnorderedList>
@@ -180,7 +205,7 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
       <Box>
         <Heading size="sm" color="purple.600" mb={2}>💬 Common Phrases by Verb Type</Heading>
         <UnorderedList spacing={1}>
-          {regularVerbLesson.commonPhrases.map((phrase, index) => (
+          {lesson.commonPhrases.map((phrase: string, index: number) => (
             <ListItem key={index} fontSize="sm">{phrase}</ListItem>
           ))}
         </UnorderedList>
@@ -191,7 +216,7 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
       <Box>
         <Heading size="sm" color="red.600" mb={2}>⚠️ Common Mistakes to Avoid</Heading>
         <UnorderedList spacing={1}>
-          {regularVerbLesson.learnerPitfalls.map((pitfall, index) => (
+          {lesson.learnerPitfalls.map((pitfall: string, index: number) => (
             <ListItem key={index} fontSize="sm">{pitfall}</ListItem>
           ))}
         </UnorderedList>
@@ -199,18 +224,54 @@ const PresenteIndicativoLesson = forwardRef<PresenteIndicativoLessonHandle, Pres
     </VStack>
   );
 
-  const currentLesson = currentVerb ? irregularVerbLessons[currentVerb] : null;
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <VStack spacing={4} align="center" py={8}>
+          <Spinner size="lg" />
+          <Text>Loading lesson...</Text>
+        </VStack>
+      );
+    }
+
+    if (error) {
+      return (
+        <Alert status="error">
+          <AlertIcon />
+          {error}
+        </Alert>
+      );
+    }
+
+    if (!lessonData) {
+      return (
+        <Alert status="info">
+          <AlertIcon />
+          No lesson data available.
+        </Alert>
+      );
+    }
+
+    return lessonData.type === "irregular"
+      ? renderIrregularLesson(lessonData)
+      : renderRegularLesson(lessonData);
+  };
 
   return (
     <Modal isOpen={isLessonModalOpen} onClose={onLessonModalClose} size="xl">
       <ModalOverlay />
       <ModalContent maxH="80vh" overflowY="auto">
         <ModalHeader textAlign="center">
-          <b>{currentLesson ? `${currentLesson.infinitive.toUpperCase()} - A Helpful Lesson` : "REGULAR VERBS - A Helpful Lesson"}</b>
+          <b>
+            {lessonData?.type === "irregular"
+              ? `${lessonData.infinitive.toUpperCase()} - A Helpful Lesson`
+              : "REGULAR VERBS - A Helpful Lesson"
+            }
+          </b>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody p={4}>
-          {currentLesson ? renderIrregularLesson(currentLesson) : renderRegularLesson()}
+          {renderContent()}
         </ModalBody>
       </ModalContent>
     </Modal>
