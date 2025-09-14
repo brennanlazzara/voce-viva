@@ -3,6 +3,8 @@ import { Box, Flex, Heading, VStack, Container } from "@chakra-ui/react";
 import RegularCard from "./RegularCard";
 import IrregularCard from "./IrregularCard";
 
+// Present tense conjugation practice
+
 const PresenteIndicativo = () => {
   return (
     <Container maxW="container.xl" p={4}>
