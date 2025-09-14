@@ -32,6 +32,7 @@ import {
   FaRedo,
 } from "react-icons/fa";
 import { useVerbData } from "../hooks/useVerbData";
+import { usePhraseData } from "../hooks/usePhraseData";
 
 const Home = () => {
   const cardBg = useColorModeValue("white", "gray.700");
@@ -43,6 +44,8 @@ const Home = () => {
   // Verb of the day state
   const [verbOfDay, setVerbOfDay] = useState(null);
   const { fetchRandomVerb, isLoading } = useVerbData();
+  const [phraseOfDay, setPhraseOfDay] = useState(null);
+  const { fetchPhrases, isLoading: isPhrasesLoading } = usePhraseData();
 
   // Mock data - this will be replaced with real data later
   const learningStats = {
@@ -55,7 +58,26 @@ const Home = () => {
   // Load verb of the day on component mount
   useEffect(() => {
     loadVerbOfDay();
+    loadPhraseOfDay();
   }, []);
+
+  const getDailyIndex = (len) => {
+    const d = new Date();
+    // stable “phrase of the day”: changes once per day
+    const seed = Number(`${d.getFullYear()}${d.getMonth() + 1}${d.getDate()}`);
+    return seed % len;
+  };
+
+  const loadPhraseOfDay = async () => {
+    try {
+      const phrases = await fetchPhrases();
+      if (phrases?.length) {
+        setPhraseOfDay(phrases[getDailyIndex(phrases.length)]);
+      }
+    } catch (e) {
+      console.error("Error loading phrase of day:", e);
+    }
+  };
 
   const loadVerbOfDay = async () => {
     try {
@@ -355,16 +377,26 @@ const Home = () => {
                 Phrase of the Day
               </Text>
               <Card variant="outline" p={4}>
-                <Text fontSize="lg" fontWeight="bold" color="green.600">
-                  Buona giornata!
-                </Text>
-                <Text fontSize="sm" color={textColor}>
-                  Have a good day!
-                </Text>
-                <Divider my={2} />
-                <Text fontSize="sm">
-                  A common way to wish someone well for their day.
-                </Text>
+                {isPhrasesLoading ? (
+                  <Flex justify="center" align="center" h="100px">
+                    <Spinner color="green.500" />
+                  </Flex>
+                ) : phraseOfDay ? (
+                  <>
+                    <Text fontSize="lg" fontWeight="bold" color="green.600">
+                      {phraseOfDay.phrase}
+                    </Text>
+                    <Text fontSize="sm" color={textColor}>
+                      {phraseOfDay.translation}
+                    </Text>
+                    <Divider my={2} />
+                    <Text fontSize="sm">{phraseOfDay.meaning}</Text>
+                  </>
+                ) : (
+                  <Text fontSize="sm" color={textColor}>
+                    Unable to load phrase.
+                  </Text>
+                )}
               </Card>
             </Box>
           </SimpleGrid>

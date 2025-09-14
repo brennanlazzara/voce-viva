@@ -3,7 +3,7 @@ import { Box, Container } from "@chakra-ui/react";
 
 const About = () => {
   return (
-    <Container Container>
+    <Container>
       <h1 style={{ textAlign: "center" }}>About The Developer</h1>
       <Box>
         <p style={{ textAlign: "center" }}>
