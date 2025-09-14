@@ -73,6 +73,7 @@ export const useVerbData = () => {
         definition: data.definition,
         regularPresenteIndicativo: data.regularPresenteIndicativo,
         auxiliaryVerb: data.auxiliaryVerb,
+        conjugations: data.conjugations,
       };
     } catch (error) {
       console.error("Error fetching random verb:", error);

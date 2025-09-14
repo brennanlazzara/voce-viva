@@ -26,6 +26,7 @@ const IrregularCard = () => {
   const [verb, setVerb] = useState("");
   const [verbType, setVerbType] = useState("");
   const [verbDefinition, setVerbDefinition] = useState("");
+  const [conjugationData, setConjugationData] = useState<any>(null);
   const [userAnswer, setUserAnswer] = useState("");
   const [isFlipped, setIsFlipped] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -61,6 +62,7 @@ const IrregularCard = () => {
       setVerb(verbData.infinitive);
       setVerbType(verbData.type);
       setVerbDefinition(verbData.definition);
+      setConjugationData(verbData.conjugations);
     } catch (error) {
       console.error("Error loading new card:", error);
     }
@@ -70,101 +72,21 @@ const IrregularCard = () => {
     pronoun: string,
     verb: string
   ) => {
-    const irregularVerbs: { [key: string]: { [key: string]: string } } = {
-      leggere: {
-        Io: "leggo",
-        Tu: "leggi",
-        "Lui/Lei": "legge",
-        Noi: "leggiamo",
-        Voi: "leggete",
-        Loro: "leggono",
-      },
-      pagare: {
-        Io: "pago",
-        Tu: "paghi",
-        "Lui/Lei": "paga",
-        Noi: "paghiamo",
-        Voi: "pagate",
-        Loro: "pagano",
-      },
-      cercare: {
-        Io: "cerco",
-        Tu: "cerchi",
-        "Lui/Lei": "cerca",
-        Noi: "cerchiamo",
-        Voi: "cercate",
-        Loro: "cercano",
-      },
-      andare: {
-        Io: "vado",
-        Tu: "vai",
-        "Lui/Lei": "va",
-        Noi: "andiamo",
-        Voi: "andate",
-        Loro: "vanno",
-      },
-      dare: {
-        Io: "do",
-        Tu: "dai",
-        "Lui/Lei": "dà",
-        Noi: "diamo",
-        Voi: "date",
-        Loro: "danno",
-      },
-      stare: {
-        Io: "sto",
-        Tu: "stai",
-        "Lui/Lei": "sta",
-        Noi: "stiamo",
-        Voi: "state",
-        Loro: "stanno",
-      },
-      sapere: {
-        Io: "so",
-        Tu: "sai",
-        "Lui/Lei": "sa",
-        Noi: "sappiamo",
-        Voi: "sapete",
-        Loro: "sanno",
-      },
-      rimanere: {
-        Io: "rimango",
-        Tu: "rimani",
-        "Lui/Lei": "rimane",
-        Noi: "rimaniamo",
-        Voi: "rimanete",
-        Loro: "rimangono",
-      },
-      venire: {
-        Io: "vengo",
-        Tu: "vieni",
-        "Lui/Lei": "viene",
-        Noi: "veniamo",
-        Voi: "venite",
-        Loro: "vengono",
-      },
-      uscire: {
-        Io: "esco",
-        Tu: "esci",
-        "Lui/Lei": "esce",
-        Noi: "usciamo",
-        Voi: "uscite",
-        Loro: "escono",
-      },
-      dire: {
-        Io: "dico",
-        Tu: "dici",
-        "Lui/Lei": "dice",
-        Noi: "diciamo",
-        Voi: "dite",
-        Loro: "dicono",
-      },
+    if (!conjugationData || !conjugationData.presenteIndicativo) {
+      return verb;
+    }
+
+    const pronounMap: { [key: string]: string } = {
+      "Io": "io",
+      "Tu": "tu",
+      "Lui/Lei": "luiLei",
+      "Noi": "noi",
+      "Voi": "voi",
+      "Loro": "loro"
     };
 
-    // Check if the verb is in the irregular verbs list
-    if (irregularVerbs[verb]) {
-      return irregularVerbs[verb][pronoun] || verb;
-    }
+    const pronounKey = pronounMap[pronoun];
+    return conjugationData.presenteIndicativo[pronounKey] || verb;
   };
 
   const checkAnswer = () => {
@@ -195,6 +117,7 @@ const IrregularCard = () => {
     setUserAnswer("");
     setIsCorrect(null);
     setHasFlippedOnce(false);
+    setConjugationData(null);
   };
 
   const getHint = () => {
@@ -324,7 +247,7 @@ const IrregularCard = () => {
           isOpen={isVerbTreeOpen}
           onClose={onVerbTreeClose}
           tense={tense as "presenteIndicativo" | "passatoProssimo"}
-          verbType={"are" || "ere" || "ire"}
+          verbType={verbType as "are" | "ere" | "ire"}
         />
         <PresenteIndicativoLesson ref={lessonModalRef} />
       </VStack>
