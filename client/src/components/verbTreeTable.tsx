@@ -37,12 +37,12 @@ const conjugationEndings: { [key: string]: { [tense: string]: string[] } } = {
 function VerbConjugationTable({ verbType, tense, irregularConjugations }: VerbConjugationTableProps) {
   const endings = verbType === "irregular" && irregularConjugations
     ? [
-        irregularConjugations["Io"],
-        irregularConjugations["Tu"],
-        irregularConjugations["Lui/Lei"],
-        irregularConjugations["Noi"],
-        irregularConjugations["Voi"],
-        irregularConjugations["Loro"],
+        irregularConjugations["io"] || irregularConjugations["Io"],
+        irregularConjugations["tu"] || irregularConjugations["Tu"],
+        irregularConjugations["luiLei"] || irregularConjugations["Lui/Lei"],
+        irregularConjugations["noi"] || irregularConjugations["Noi"],
+        irregularConjugations["voi"] || irregularConjugations["Voi"],
+        irregularConjugations["loro"] || irregularConjugations["Loro"],
       ]
     : conjugationEndings[verbType][tense];
 

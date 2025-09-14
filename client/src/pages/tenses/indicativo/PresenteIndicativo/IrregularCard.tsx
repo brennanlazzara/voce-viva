@@ -243,11 +243,12 @@ const IrregularCard = () => {
           cancelRef={cancelRef}
         />
         <VerbTreeGraphDialog
-          title="Verb Tree Graphs"
+          title={`Verb Tree Graph - ${verb}`}
           isOpen={isVerbTreeOpen}
           onClose={onVerbTreeClose}
           tense={tense as "presenteIndicativo" | "passatoProssimo"}
-          verbType={verbType as "are" | "ere" | "ire"}
+          verbType={conjugationData ? "irregular" : (verbType as "are" | "ere" | "ire")}
+          irregularConjugations={conjugationData?.presenteIndicativo}
         />
         <PresenteIndicativoLesson ref={lessonModalRef} />
       </VStack>
