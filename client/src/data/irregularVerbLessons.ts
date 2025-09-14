@@ -6,6 +6,18 @@ export interface IrregularVerbLesson {
   learnerPitfalls: string[];
 }
 
+export interface RegularVerbLesson {
+  patternExplanation: string;
+  memoryTricks: string[];
+  commonPhrases: string[];
+  learnerPitfalls: string[];
+  conjugationExamples: {
+    are: { stem: string; infinitive: string; conjugations: string[] };
+    ere: { stem: string; infinitive: string; conjugations: string[] };
+    ire: { stem: string; infinitive: string; conjugations: string[] };
+  };
+}
+
 export const irregularVerbLessons: { [key: string]: IrregularVerbLesson } = {
   andare: {
     infinitive: "andare",
@@ -206,4 +218,52 @@ export const irregularVerbLessons: { [key: string]: IrregularVerbLesson } = {
       "Don't say 'dicono' - it's 'dicono' (they say)"
     ]
   }
+};
+
+export const regularVerbLesson: RegularVerbLesson = {
+  patternExplanation: "Regular Italian verbs follow predictable patterns based on their infinitive endings. The magic lies in recognizing the STEM (infinitive minus ending) + ENDING system that works across all three verb families.",
+
+  conjugationExamples: {
+    are: {
+      stem: "parl",
+      infinitive: "parlare",
+      conjugations: ["parlo", "parli", "parla", "parliamo", "parlate", "parlano"]
+    },
+    ere: {
+      stem: "cred",
+      infinitive: "credere",
+      conjugations: ["credo", "credi", "crede", "crediamo", "credete", "credono"]
+    },
+    ire: {
+      stem: "dorm",
+      infinitive: "dormire",
+      conjugations: ["dormo", "dormi", "dorme", "dormiamo", "dormite", "dormono"]
+    }
+  },
+
+  memoryTricks: [
+    "**ARE**: 'A-R-E' sounds like 'ANO' - remember the 'loro' ending!",
+    "**ERE**: Think 'E-R-E' leads to 'ONO' - they end similar!",
+    "**IRE**: 'I-R-E' uses 'ONO' too, but 'voi' gets 'ITE' (sounds like 'bite')",
+    "**Shared pattern**: io/tu/lui forms are nearly identical across all types",
+    "**The '3-2-1' rule**: 3 singular forms are short, noi/voi are longer, loro is longest"
+  ],
+
+  commonPhrases: [
+    "**ARE verbs**: Parlo italiano - I speak Italian",
+    "**ARE verbs**: Mangiamo pizza - We eat pizza",
+    "**ARE verbs**: Studiate molto? - Do you all study a lot?",
+    "**ERE verbs**: Credi in me? - Do you believe in me?",
+    "**ERE verbs**: Vendono libri - They sell books",
+    "**IRE verbs**: Dormo bene - I sleep well",
+    "**IRE verbs**: Partite domani - You all are leaving tomorrow"
+  ],
+
+  learnerPitfalls: [
+    "Don't mix up **-ete** (ERE verbs) and **-ite** (IRE verbs) for 'voi'",
+    "**-ano** vs **-ono**: ARE verbs use 'ano', ERE/IRE use 'ono'",
+    "Remember to **drop the entire ending** (-are/-ere/-ire), not just the 'e'",
+    "**Silent 'h'** in 'noi' forms: 'parliamo' not 'parlaimo'",
+    "**Double letters** in 'voi': 'parlate', 'credete', 'dormite' - don't drop letters!"
+  ]
 };
