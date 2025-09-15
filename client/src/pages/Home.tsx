@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Container,
@@ -99,38 +99,38 @@ const Home: React.FC = () => {
     lessonsCompleted: 1,
   };
 
+  // ✅ Memoized too
+  const loadVerbOfDay = useCallback(async () => {
+    try {
+      const data = await fetchRandomVerb();
+      setVerbOfDay(data);
+    } catch (err) {
+      console.error("Error loading verb:", err);
+    }
+  }, [fetchRandomVerb]);
+
+  // ✅ Memoized too
+  const loadPhraseOfDay = useCallback(async () => {
+    try {
+      const list = await fetchPhrases();
+      if (list?.length) {
+        setPhraseOfDay(list[getDailyIndex(list.length)]);
+      }
+    } catch (err) {
+      console.error("Error loading phrase:", err);
+    }
+  }, [fetchPhrases]);
+
   useEffect(() => {
     void loadVerbOfDay();
     void loadPhraseOfDay();
-  }, []);
+  }, [loadVerbOfDay, loadPhraseOfDay]);
 
   const getDailyIndex = (len: number): number => {
     const d = new Date();
     // stable “phrase of the day”: changes once per day
     const seed = Number(`${d.getFullYear()}${d.getMonth() + 1}${d.getDate()}`);
     return seed % len;
-  };
-
-  const loadPhraseOfDay = async (): Promise<void> => {
-    try {
-      const phrases = await fetchPhrases();
-      if (phrases?.length) {
-        setPhraseOfDay(phrases[getDailyIndex(phrases.length)]);
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Error loading phrase of day:", e);
-    }
-  };
-
-  const loadVerbOfDay = async (): Promise<void> => {
-    try {
-      const verbData = await fetchRandomVerb();
-      setVerbOfDay(verbData);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Error loading verb of day:", error);
-    }
   };
 
   const tenseProgress: TenseProgressItem[] = [
