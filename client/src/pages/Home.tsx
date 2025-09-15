@@ -31,10 +31,52 @@ import {
   FaCheckCircle,
   FaRedo,
 } from "react-icons/fa";
-import { useVerbData } from "../hooks/useVerbData";
-import { usePhraseData } from "../hooks/usePhraseData";
+import type { IconType } from "react-icons";
+import { usePhraseData } from "../hooks/usePhrasesData.js";
+import { useVerbData } from "../hooks/useVerbData.js";
 
-const Home = () => {
+// ----- Types -----
+interface Verb {
+  infinitive: string;
+  definition: string;
+  type: string; // e.g. "are" | "ere" | "ire"
+  auxiliaryVerb: string; // e.g. "essere" | "avere"
+  regularPresenteIndicativo?: boolean;
+}
+
+interface Phrase {
+  phrase: string;
+  translation: string;
+  meaning?: string;
+}
+
+interface UseVerbData {
+  fetchRandomVerb: () => Promise<Verb>;
+  isLoading: boolean;
+}
+
+interface UsePhraseData {
+  fetchPhrases: () => Promise<Phrase[]>;
+  isLoading: boolean;
+}
+
+interface TenseProgressItem {
+  name: string;
+  completed: boolean;
+  progress: number; // 0-100
+  available: boolean;
+}
+
+interface QuickAction {
+  title: string;
+  description: string;
+  icon: IconType;
+  path: string;
+  available: boolean;
+  color: string; // Chakra color key (e.g., "blue", "green")
+}
+
+const Home: React.FC = () => {
   const cardBg = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const textColor = useColorModeValue("gray.600", "gray.400");
@@ -42,10 +84,12 @@ const Home = () => {
   const progressBg = useColorModeValue("gray.100", "gray.600");
 
   // Verb of the day state
-  const [verbOfDay, setVerbOfDay] = useState(null);
-  const { fetchRandomVerb, isLoading } = useVerbData();
-  const [phraseOfDay, setPhraseOfDay] = useState(null);
-  const { fetchPhrases, isLoading: isPhrasesLoading } = usePhraseData();
+  const [verbOfDay, setVerbOfDay] = useState<Verb | null>(null);
+  const { fetchRandomVerb, isLoading } = useVerbData() as UseVerbData;
+
+  const [phraseOfDay, setPhraseOfDay] = useState<Phrase | null>(null);
+  const { fetchPhrases, isLoading: isPhrasesLoading } =
+    usePhraseData() as UsePhraseData;
 
   // Mock data - this will be replaced with real data later
   const learningStats = {
@@ -55,40 +99,41 @@ const Home = () => {
     lessonsCompleted: 1,
   };
 
-  // Load verb of the day on component mount
   useEffect(() => {
-    loadVerbOfDay();
-    loadPhraseOfDay();
+    void loadVerbOfDay();
+    void loadPhraseOfDay();
   }, []);
 
-  const getDailyIndex = (len) => {
+  const getDailyIndex = (len: number): number => {
     const d = new Date();
     // stable “phrase of the day”: changes once per day
     const seed = Number(`${d.getFullYear()}${d.getMonth() + 1}${d.getDate()}`);
     return seed % len;
   };
 
-  const loadPhraseOfDay = async () => {
+  const loadPhraseOfDay = async (): Promise<void> => {
     try {
       const phrases = await fetchPhrases();
       if (phrases?.length) {
         setPhraseOfDay(phrases[getDailyIndex(phrases.length)]);
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("Error loading phrase of day:", e);
     }
   };
 
-  const loadVerbOfDay = async () => {
+  const loadVerbOfDay = async (): Promise<void> => {
     try {
       const verbData = await fetchRandomVerb();
       setVerbOfDay(verbData);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Error loading verb of day:", error);
     }
   };
 
-  const tenseProgress = [
+  const tenseProgress: TenseProgressItem[] = [
     {
       name: "Presente Indicativo",
       completed: true,
@@ -106,7 +151,7 @@ const Home = () => {
     { name: "Condizionale", completed: false, progress: 0, available: false },
   ];
 
-  const quickActions = [
+  const quickActions: QuickAction[] = [
     {
       title: "Continue Learning",
       description: "Practice Presente Indicativo",
@@ -255,52 +300,57 @@ const Home = () => {
           </CardHeader>
           <CardBody>
             <SimpleGrid columns={2} spacing={4}>
-              {quickActions.map((action) => (
-                <Card
-                  key={action.title}
-                  as={action.available ? RouterLink : "div"}
-                  to={action.available ? action.path : undefined}
-                  variant="outline"
-                  borderColor={borderColor}
-                  opacity={action.available ? 1 : 0.6}
-                  position="relative"
-                  cursor={action.available ? "pointer" : "default"}
-                  _hover={
-                    action.available
-                      ? {
-                          borderColor: `${action.color}.300`,
-                          transform: "translateY(-2px)",
-                          transition: "all 0.2s",
-                        }
-                      : {}
-                  }
-                >
-                  <CardBody p={4} textAlign="center">
-                    {!action.available && (
+              {quickActions.map((action) => {
+                const linkProps = action.available
+                  ? ({ as: RouterLink, to: action.path } as const)
+                  : ({} as const);
+
+                return (
+                  <Card
+                    key={action.title}
+                    {...linkProps}
+                    variant="outline"
+                    borderColor={borderColor}
+                    opacity={action.available ? 1 : 0.6}
+                    position="relative"
+                    cursor={action.available ? "pointer" : "default"}
+                    _hover={
+                      action.available
+                        ? {
+                            borderColor: `${action.color}.300`,
+                            transform: "translateY(-2px)",
+                            transition: "all 0.2s",
+                          }
+                        : {}
+                    }
+                  >
+                    <CardBody p={4} textAlign="center">
+                      {!action.available && (
+                        <Icon
+                          as={FaLock}
+                          position="absolute"
+                          top={2}
+                          right={2}
+                          color="gray.400"
+                          boxSize={3}
+                        />
+                      )}
                       <Icon
-                        as={FaLock}
-                        position="absolute"
-                        top={2}
-                        right={2}
-                        color="gray.400"
-                        boxSize={3}
+                        as={action.icon}
+                        boxSize={8}
+                        color={`${action.color}.500`}
+                        mb={2}
                       />
-                    )}
-                    <Icon
-                      as={action.icon}
-                      boxSize={8}
-                      color={`${action.color}.500`}
-                      mb={2}
-                    />
-                    <Text fontWeight="semibold" fontSize="sm" mb={1}>
-                      {action.title}
-                    </Text>
-                    <Text fontSize="xs" color={textColor}>
-                      {action.description}
-                    </Text>
-                  </CardBody>
-                </Card>
-              ))}
+                      <Text fontWeight="semibold" fontSize="sm" mb={1}>
+                        {action.title}
+                      </Text>
+                      <Text fontSize="xs" color={textColor}>
+                        {action.description}
+                      </Text>
+                    </CardBody>
+                  </Card>
+                );
+              })}
             </SimpleGrid>
           </CardBody>
         </Card>
