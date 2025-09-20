@@ -1,5 +1,8 @@
 import React, { Ref } from "react";
 import { Link as RouterLink, LinkProps } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import LoginButton from "./LoginButton";
+import UserProfile from "./UserProfile";
 import {
   Box,
   Flex,
@@ -44,6 +47,7 @@ const BulletedMenuItem = React.forwardRef<
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { isAuthenticated, loading } = useAuth();
 
   const verbTenses = [
     {
@@ -142,6 +146,15 @@ const Header = () => {
 
         <Flex alignItems={"center"}>
           <Stack direction={"row"} spacing={4}>
+            {!loading && (
+              <>
+                {isAuthenticated ? (
+                  <UserProfile />
+                ) : (
+                  <LoginButton />
+                )}
+              </>
+            )}
             <Menu>
               <MenuButton
                 as={Button}

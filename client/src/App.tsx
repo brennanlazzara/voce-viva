@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ChakraProvider, ColorModeScript, Box } from "@chakra-ui/react";
+import { AuthProvider } from "./contexts/AuthContext";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -39,8 +40,9 @@ function App() {
   return (
     <ChakraProvider>
       <ColorModeScript />
-      <Router>
-        <Box className="App">
+      <AuthProvider>
+        <Router>
+          <Box className="App">
           <Header />
           <Box p={4}>
             <Routes>
@@ -148,7 +150,8 @@ function App() {
             </Routes>
           </Box>
         </Box>
-      </Router>
+        </Router>
+      </AuthProvider>
     </ChakraProvider>
   );
 }
