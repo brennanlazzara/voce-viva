@@ -99,32 +99,32 @@ const Home: React.FC = () => {
     lessonsCompleted: 1,
   };
 
-  // ✅ Memoized too
-  const loadVerbOfDay = useCallback(async () => {
-    try {
-      const data = await fetchRandomVerb();
-      setVerbOfDay(data);
-    } catch (err) {
-      console.error("Error loading verb:", err);
-    }
-  }, [fetchRandomVerb]);
-
-  // ✅ Memoized too
-  const loadPhraseOfDay = useCallback(async () => {
-    try {
-      const list = await fetchPhrases();
-      if (list?.length) {
-        setPhraseOfDay(list[getDailyIndex(list.length)]);
-      }
-    } catch (err) {
-      console.error("Error loading phrase:", err);
-    }
-  }, [fetchPhrases]);
-
   useEffect(() => {
     void loadVerbOfDay();
     void loadPhraseOfDay();
-  }, [loadVerbOfDay, loadPhraseOfDay]);
+  }, []);
+
+  const loadPhraseOfDay = async (): Promise<void> => {
+    try {
+      const phrases = await fetchPhrases();
+      if (phrases?.length) {
+        setPhraseOfDay(phrases[getDailyIndex(phrases.length)]);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Error loading phrase of day:", e);
+    }
+  };
+
+  const loadVerbOfDay = async (): Promise<void> => {
+    try {
+      const verbData = await fetchRandomVerb();
+      setVerbOfDay(verbData);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error loading verb of day:", error);
+    }
+  };
 
   const getDailyIndex = (len: number): number => {
     const d = new Date();
@@ -396,23 +396,23 @@ const Home: React.FC = () => {
                       {verbOfDay.definition}
                     </Text>
                     <Divider my={2} />
-                    <HStack spacing={4}>
+                    <Flex justify="space-between" align="center">
                       <Text fontSize="sm">
                         <strong>Type:</strong> -{verbOfDay.type} verb
                       </Text>
                       <Text fontSize="sm">
                         <strong>Auxiliary:</strong> {verbOfDay.auxiliaryVerb}
                       </Text>
-                    </HStack>
-                    {verbOfDay.regularPresenteIndicativo ? (
-                      <Badge colorScheme="green" size="sm" mt={2}>
-                        Regular
-                      </Badge>
-                    ) : (
-                      <Badge colorScheme="orange" size="sm" mt={2}>
-                        Irregular
-                      </Badge>
-                    )}
+                      {verbOfDay.regularPresenteIndicativo ? (
+                        <Badge colorScheme="green" size="sm">
+                          Regular
+                        </Badge>
+                      ) : (
+                        <Badge colorScheme="orange" size="sm">
+                          Irregular
+                        </Badge>
+                      )}
+                    </Flex>
                   </>
                 ) : (
                   <Text fontSize="sm" color={textColor}>
@@ -423,9 +423,21 @@ const Home: React.FC = () => {
             </Box>
 
             <Box>
-              <Text fontWeight="semibold" mb={2} color={headingColor}>
-                Phrase of the Day
-              </Text>
+              <Flex justify="space-between" align="center" mb={2}>
+                <Text fontWeight="semibold" color={headingColor}>
+                  Phrase of the Day
+                </Text>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="blue"
+                  onClick={loadPhraseOfDay}
+                  isLoading={isPhrasesLoading}
+                  leftIcon={<Icon as={FaRedo} />}
+                >
+                  New Phrase
+                </Button>
+              </Flex>
               <Card variant="outline" p={4}>
                 {isPhrasesLoading ? (
                   <Flex justify="center" align="center" h="100px">
