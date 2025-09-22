@@ -1,5 +1,5 @@
-import React, { Ref } from "react";
-import { Link as RouterLink, LinkProps } from "react-router-dom";
+import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoginButton from "./LoginButton";
 import UserProfile from "./UserProfile";
@@ -147,13 +147,7 @@ const Header = () => {
         <Flex alignItems={"center"}>
           <Stack direction={"row"} spacing={4}>
             {!loading && (
-              <>
-                {isAuthenticated ? (
-                  <UserProfile />
-                ) : (
-                  <LoginButton />
-                )}
-              </>
+              <>{isAuthenticated ? <UserProfile /> : <LoginButton />}</>
             )}
             <Menu>
               <MenuButton

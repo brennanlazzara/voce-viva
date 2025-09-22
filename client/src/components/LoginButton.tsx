@@ -8,11 +8,11 @@ const LoginButton: React.FC = () => {
   return (
     <Button
       colorScheme="blue"
-      size="lg"
+      size="md"
       onClick={login}
       leftIcon={<span>🔐</span>}
     >
-      Sign in with Google
+      Sign in
     </Button>
   );
 };
