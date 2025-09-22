@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SessionProvider } from "../components/SessionProvider";
+import Header from "../components/Header";
 
 export const metadata: Metadata = {
   title: "Italian Verb Master",
@@ -14,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-50 font-sans">
-        {children}
+        <SessionProvider>
+          <Header />
+          <main>{children}</main>
+        </SessionProvider>
       </body>
     </html>
   );
