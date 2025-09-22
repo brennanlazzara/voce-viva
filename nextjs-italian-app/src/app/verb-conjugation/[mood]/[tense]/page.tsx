@@ -1,3 +1,6 @@
+import VerbConjugationTable from "../../../../components/VerbConjugationTable";
+import VerbPracticeCard from "../../../../components/VerbPracticeCard";
+
 type PageProps = {
   params: Promise<{
     mood: string;
@@ -52,31 +55,64 @@ export default async function VerbConjugationPage({ params }: PageProps) {
             {moodName} - {tenseName}
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Verb Conjugation Table Placeholder */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-700">Conjugation Table</h3>
-              <div className="bg-gray-50 p-4 rounded">
-                <p className="text-gray-600">
-                  🚧 Verb conjugation table will be implemented here
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  This will fetch verb data based on mood/tense parameters
-                </p>
+          {/* Verb Types Selector */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-700 mb-3">Italian Verb Types</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-800 mb-2">-ARE Verbs</h4>
+                <p className="text-sm text-blue-700">Example: cantare (to sing)</p>
+                <VerbConjugationTable
+                  verbType="are"
+                  tense={tense.replace('-', '')}
+                  mood={mood}
+                />
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-800 mb-2">-ERE Verbs</h4>
+                <p className="text-sm text-green-700">Example: vendere (to sell)</p>
+                <VerbConjugationTable
+                  verbType="ere"
+                  tense={tense.replace('-', '')}
+                  mood={mood}
+                />
+              </div>
+
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-purple-800 mb-2">-IRE Verbs</h4>
+                <p className="text-sm text-purple-700">Example: dormire (to sleep)</p>
+                <VerbConjugationTable
+                  verbType="ire"
+                  tense={tense.replace('-', '')}
+                  mood={mood}
+                />
               </div>
             </div>
+          </div>
 
-            {/* Practice Exercises Placeholder */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-700">Practice Exercises</h3>
-              <div className="bg-gray-50 p-4 rounded">
-                <p className="text-gray-600">
-                  🎯 Interactive exercises will be implemented here
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Dynamic content based on the specific mood/tense combination
-                </p>
-              </div>
+          {/* Interactive Practice Cards */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-700">Interactive Practice</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              <VerbPracticeCard
+                verbType="are"
+                tense={tense.replace('-', '')}
+                mood={mood}
+                title="Practice -ARE Verbs"
+              />
+              <VerbPracticeCard
+                verbType="ere"
+                tense={tense.replace('-', '')}
+                mood={mood}
+                title="Practice -ERE Verbs"
+              />
+              <VerbPracticeCard
+                verbType="ire"
+                tense={tense.replace('-', '')}
+                mood={mood}
+                title="Practice -IRE Verbs"
+              />
             </div>
           </div>
 

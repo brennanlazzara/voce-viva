@@ -13,7 +13,7 @@ const handler = NextAuth({
     error: '/auth/error',
   },
   callbacks: {
-    async session({ session, token }) {
+    async session({ session }) {
       // Send properties to the client
       return session;
     },

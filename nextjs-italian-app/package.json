@@ -9,12 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.2.4",
-    "@chakra-ui/react": "^3.27.0",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
     "axios": "^1.12.2",
-    "framer-motion": "^12.23.18",
     "mongoose": "^8.18.1",
     "next": "14.2.32",
     "next-auth": "^4.24.11",

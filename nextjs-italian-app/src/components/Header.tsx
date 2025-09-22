@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import LoginButton from './LoginButton';
 import UserProfile from './UserProfile';
+import ColorModeSwitcher from './ColorModeSwitcher';
 import { useState } from 'react';
 
 export default function Header() {
@@ -90,8 +91,9 @@ export default function Header() {
               Contact
             </Link>
 
-            {/* Authentication */}
+            {/* Dark Mode & Authentication */}
             <div className="flex items-center space-x-4">
+              <ColorModeSwitcher />
               {status === "loading" ? (
                 <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
               ) : session ? (
@@ -129,7 +131,8 @@ export default function Header() {
               >
                 Contact
               </Link>
-              <div className="pt-3 border-t border-gray-200">
+              <div className="pt-3 border-t border-gray-200 flex items-center justify-between">
+                <ColorModeSwitcher />
                 {session ? <UserProfile /> : <LoginButton />}
               </div>
             </div>
