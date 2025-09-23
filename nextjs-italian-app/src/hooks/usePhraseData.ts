@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 
 interface PhraseData {
   phrase: string;
@@ -9,11 +9,17 @@ interface PhraseData {
 
 export const usePhraseData = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const cacheRef = useRef<PhraseData[] | null>(null);
 
-  // Use environment variable for API base URL
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+  // Use Next.js internal API routes
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-  const fetchPhrases = async (): Promise<PhraseData[]> => {
+  const fetchPhrases = useCallback(async (): Promise<PhraseData[]> => {
+    // Return cached data if available
+    if (cacheRef.current) {
+      return cacheRef.current;
+    }
+
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -28,12 +34,16 @@ export const usePhraseData = () => {
       }
 
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      const phrases = Array.isArray(data) ? data : [];
+
+      // Cache the result
+      cacheRef.current = phrases;
+      return phrases;
     } catch (error) {
       console.error("Error fetching phrases:", error);
 
       // Fallback phrase data if API fails
-      return [
+      const fallbackPhrases = [
         {
           phrase: "Buongiorno",
           translation: "Good morning",
@@ -60,10 +70,14 @@ export const usePhraseData = () => {
           meaning: "Used to ask for clarification"
         }
       ];
+
+      // Cache the fallback data
+      cacheRef.current = fallbackPhrases;
+      return fallbackPhrases;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [API_BASE_URL]);
 
   return { fetchPhrases, isLoading };
 };

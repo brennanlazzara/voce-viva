@@ -16,8 +16,8 @@ interface FilterOptions {
 export const useVerbData = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  // For now, we'll use the API_BASE_URL from environment or fallback to localhost
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+  // Use Next.js internal API routes
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const fetchRandomPronoun = useCallback(async (): Promise<string> => {
     setIsLoading(true);

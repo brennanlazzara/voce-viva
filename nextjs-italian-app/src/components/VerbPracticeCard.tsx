@@ -132,88 +132,118 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
   const hint = getHintText();
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 max-w-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 max-w-sm mx-auto">
+      {/* Header with Title and Hint Button */}
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-gray-800">{title}</h3>
         <button
           onClick={() => setIsHintDialogOpen(true)}
-          className="text-blue-500 hover:text-blue-700"
+          className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
           title="Show hint"
         >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
         </button>
       </div>
 
-      <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 ${getVerbTypeColor()}`}>
-        -{verbType.toUpperCase()}
+      {/* Verb Type Badge */}
+      <div className="flex justify-center mb-6">
+        <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold ${getVerbTypeColor()} shadow-sm`}>
+          <span className="mr-1">📖</span>
+          -{verbType.toUpperCase()} VERBS
+        </div>
       </div>
 
+      {/* Interactive Card */}
       <div
-        className="w-full h-32 bg-gray-100 rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors mb-4"
+        className={`w-full h-40 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-500 transform hover:scale-105 mb-6 ${
+          isFlipped
+            ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg'
+            : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300'
+        }`}
         onClick={() => setIsFlipped(!isFlipped)}
       >
-        <span className="text-2xl font-bold text-gray-800">
-          {isFlipped ? currentVerb.infinitive : currentPronoun}
-        </span>
+        <div className="text-center">
+          <div className="text-3xl font-bold mb-2">
+            {isFlipped ? currentVerb.infinitive : currentPronoun}
+          </div>
+          {isFlipped && (
+            <div className="text-sm opacity-90">
+              {currentVerb.definition}
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Card Instructions */}
       {!isFlipped && (
-        <p className="text-sm text-gray-500 text-center mb-4">
-          Click the card to see the verb
+        <p className="text-sm text-gray-500 text-center mb-6 italic">
+          💡 Click the card to reveal the verb
         </p>
       )}
 
+      {/* Input Section */}
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Your Answer:
+          </label>
+          <input
+            type="text"
+            placeholder="Enter conjugation (e.g., 'parlo')"
+            value={userAnswer}
+            onChange={(e) => setUserAnswer(e.target.value)}
+            onKeyDown={handleKeyPress}
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
+          />
+        </div>
 
-      <div className="space-y-3">
-        <input
-          type="text"
-          placeholder="Enter conjugation (e.g., 'parlo')"
-          value={userAnswer}
-          onChange={(e) => setUserAnswer(e.target.value)}
-          onKeyDown={handleKeyPress}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-
-        <div className="flex space-x-2">
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => generateNewCard()}
-            className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+            className="px-4 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
             disabled={isLoading}
           >
-            {isLoading ? "Loading..." : "New Card"}
+            {isLoading ? "🔄 Loading..." : "🎲 New Card"}
           </button>
           <button
             onClick={checkAnswer}
-            className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
           >
-            Check Answer
+            ✓ Check Answer
           </button>
         </div>
 
+        {/* Feedback */}
         {feedback && (
-          <div className={`text-center font-bold ${
-            feedback === "correct" ? "text-green-600" : "text-red-600"
+          <div className={`text-center p-4 rounded-lg font-bold text-lg ${
+            feedback === "correct"
+              ? "bg-green-100 text-green-800 border border-green-200"
+              : "bg-red-100 text-red-800 border border-red-200"
           }`}>
-            {feedback === "correct" ? "Correct! 🎉" : "Incorrect. Try again!"}
+            {feedback === "correct" ? "🎉 Perfetto! Correct!" : "❌ Incorrect. Try again!"}
           </div>
         )}
 
-        {/* Additional Action Buttons */}
-        <div className="border-t pt-3 space-y-2">
-          <button
-            onClick={() => setIsVerbTreeOpen(true)}
-            className="w-full px-3 py-2 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors"
-          >
-            🌳 View Verb Tree
-          </button>
-          <button
-            onClick={() => setIsLessonOpen(true)}
-            className="w-full px-3 py-2 bg-purple-500 text-white text-sm rounded-md hover:bg-purple-600 transition-colors"
-          >
-            📚 Study Lesson
-          </button>
+        {/* Study Tools */}
+        <div className="border-t pt-4 space-y-3">
+          <p className="text-sm font-medium text-gray-700 text-center">Study Tools:</p>
+          <div className="grid grid-cols-1 gap-2">
+            <button
+              onClick={() => setIsVerbTreeOpen(true)}
+              className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
+            >
+              🌳 View Conjugation Tree
+            </button>
+            <button
+              onClick={() => setIsLessonOpen(true)}
+              className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white text-sm rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
+            >
+              📚 Study Grammar Lesson
+            </button>
+          </div>
         </div>
       </div>
 
