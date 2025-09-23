@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import HintDialog from './modals/HintDialog';
-import VerbTreeGraphDialog from './modals/VerbTreeGraphDialog';
-import LessonDialog from './modals/LessonDialog';
-import { useVerbData } from '../hooks/useVerbData';
+import React, { useState, useEffect } from "react";
+import HintDialog from "./modals/HintDialog";
+import VerbTreeGraphDialog from "./modals/VerbTreeGraphDialog";
+import LessonDialog from "./modals/LessonDialog";
+import { useVerbData } from "../hooks/useVerbData";
 
 interface VerbPracticeCardProps {
   verbType: "are" | "ere" | "ire";
@@ -15,12 +15,23 @@ interface VerbPracticeCardProps {
 
 const PRONOUNS = ["Io", "Tu", "Lui/Lei", "Noi", "Voi", "Loro"];
 
-function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProps) {
-  const [currentVerb, setCurrentVerb] = useState({ infinitive: "", definition: "", type: verbType });
+function VerbPracticeCard({
+  verbType,
+  tense,
+  mood,
+  title,
+}: VerbPracticeCardProps) {
+  const [currentVerb, setCurrentVerb] = useState({
+    infinitive: "",
+    definition: "",
+    type: verbType,
+  });
   const [currentPronoun, setCurrentPronoun] = useState(PRONOUNS[0]);
   const [userAnswer, setUserAnswer] = useState("");
   const [isFlipped, setIsFlipped] = useState(false);
-  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
+  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(
+    null
+  );
   const [isHintDialogOpen, setIsHintDialogOpen] = useState(false);
   const [isVerbTreeOpen, setIsVerbTreeOpen] = useState(false);
   const [isLessonOpen, setIsLessonOpen] = useState(false);
@@ -36,7 +47,7 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
       // Fetch pronoun and verb data from API
       const [pronounData, verbData] = await Promise.all([
         fetchRandomPronoun(),
-        fetchRandomVerb({ regularOnly: true }) // Filter for regular verbs for practice
+        fetchRandomVerb({ regularOnly: true, type: verbType }), // Filter for regular verbs AND specific verb type
       ]);
 
       setCurrentPronoun(pronounData);
@@ -47,8 +58,13 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
     } catch (error) {
       console.error("Error loading new card:", error);
       // Fallback to static data if API fails
-      const fallbackPronoun = PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
-      const fallbackVerb = { infinitive: "parlare", definition: "to speak", type: verbType };
+      const fallbackPronoun =
+        PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
+      const fallbackVerb = {
+        infinitive: "parlare",
+        definition: "to speak",
+        type: verbType,
+      };
 
       setCurrentPronoun(fallbackPronoun);
       setCurrentVerb(fallbackVerb);
@@ -90,7 +106,8 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
 
   const checkAnswer = () => {
     const correctAnswer = conjugateVerb(currentPronoun, currentVerb.infinitive);
-    const isCorrect = userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase();
+    const isCorrect =
+      userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase();
 
     setFeedback(isCorrect ? "correct" : "incorrect");
 
@@ -109,10 +126,14 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
 
   const getVerbTypeColor = () => {
     switch (verbType) {
-      case "are": return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-700";
-      case "ere": return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-700";
-      case "ire": return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-700";
-      default: return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600";
+      case "are":
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-700";
+      case "ere":
+        return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-700";
+      case "ire":
+        return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-700";
+      default:
+        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600";
     }
   };
 
@@ -124,7 +145,9 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
     };
 
     return {
-      type: `This is an -${verbType.toUpperCase()} verb (${currentVerb.definition})`,
+      type: `This is an -${verbType.toUpperCase()} verb (${
+        currentVerb.definition
+      })`,
       endings: endings[verbType],
     };
   };
@@ -135,23 +158,30 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 max-w-sm mx-auto">
       {/* Header with Title and Hint Button */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+          {title}
+        </h3>
         <button
           onClick={() => setIsHintDialogOpen(true)}
           className="p-2 text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200"
           title="Show hint"
         >
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clipRule="evenodd"
+            />
           </svg>
         </button>
       </div>
 
       {/* Verb Type Badge */}
       <div className="flex justify-center mb-6">
-        <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold ${getVerbTypeColor()} shadow-sm`}>
-          <span className="mr-1">📖</span>
-          -{verbType.toUpperCase()} VERBS
+        <div
+          className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold ${getVerbTypeColor()} shadow-sm`}
+        >
+          <span className="mr-1">📖</span>-{verbType.toUpperCase()} VERBS
         </div>
       </div>
 
@@ -159,8 +189,8 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
       <div
         className={`w-full h-40 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-500 transform hover:scale-105 mb-6 ${
           isFlipped
-            ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg'
-            : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-800 dark:text-gray-200 hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-600 dark:hover:to-gray-500'
+            ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg"
+            : "bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-800 dark:text-gray-200 hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-600 dark:hover:to-gray-500"
         }`}
         onClick={() => setIsFlipped(!isFlipped)}
       >
@@ -169,9 +199,7 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
             {isFlipped ? currentVerb.infinitive : currentPronoun}
           </div>
           {isFlipped && (
-            <div className="text-sm opacity-90">
-              {currentVerb.definition}
-            </div>
+            <div className="text-sm opacity-90">{currentVerb.definition}</div>
           )}
         </div>
       </div>
@@ -218,18 +246,24 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
 
         {/* Feedback */}
         {feedback && (
-          <div className={`text-center p-4 rounded-lg font-bold text-lg ${
-            feedback === "correct"
-              ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-700"
-              : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700"
-          }`}>
-            {feedback === "correct" ? "🎉 Perfetto! Correct!" : "❌ Incorrect. Try again!"}
+          <div
+            className={`text-center p-4 rounded-lg font-bold text-lg ${
+              feedback === "correct"
+                ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-700"
+                : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700"
+            }`}
+          >
+            {feedback === "correct"
+              ? "🎉 Perfetto! Correct!"
+              : "❌ Incorrect. Try again!"}
           </div>
         )}
 
         {/* Study Tools */}
         <div className="border-t pt-4 space-y-3">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">Study Tools:</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
+            Study Tools:
+          </p>
           <div className="grid grid-cols-1 gap-2">
             <button
               onClick={() => setIsVerbTreeOpen(true)}
