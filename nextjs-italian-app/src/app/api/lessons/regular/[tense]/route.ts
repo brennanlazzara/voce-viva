@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '../../../../../lib/mongodb';
-import Lesson from '../../../../../models/Lesson';
+import { query } from '../../../../../lib/postgresql';
 
 type Params = {
   tense: string;
@@ -12,20 +11,20 @@ export async function GET(
 ) {
   try {
     const { tense } = await params;
-    await connectDB();
-    const lesson = await Lesson.findOne({
-      type: 'regular',
-      tense: tense
-    });
+    const result = await query(`
+      SELECT * FROM lessons
+      WHERE type = 'regular' AND tense = $1
+      LIMIT 1
+    `, [tense]);
 
-    if (!lesson) {
+    if (result.rows.length === 0) {
       return NextResponse.json(
         { message: 'Regular lesson not found for this tense' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(lesson);
+    return NextResponse.json(result.rows[0]);
   } catch (error) {
     return NextResponse.json(
       { message: (error as Error).message },

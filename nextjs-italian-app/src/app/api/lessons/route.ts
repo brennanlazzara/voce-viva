@@ -1,15 +1,18 @@
-import { NextResponse } from 'next/server';
-import connectDB from '../../../lib/mongodb';
-import Lesson from '../../../models/Lesson';
+import { NextResponse } from "next/server";
+import { query } from "../../../lib/postgresql";
 
 export async function GET() {
   try {
-    await connectDB();
-    const lessons = await Lesson.find();
-    return NextResponse.json(lessons);
+    const result = await query(`
+      SELECT * FROM lessons
+      ORDER BY id
+    `);
+
+    return NextResponse.json(result.rows);
   } catch (error) {
+    console.error("Database error:", error);
     return NextResponse.json(
-      { message: (error as Error).message },
+      { message: "Database error occurred" },
       { status: 500 }
     );
   }

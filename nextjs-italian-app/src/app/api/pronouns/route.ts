@@ -1,15 +1,19 @@
-import { NextResponse } from 'next/server';
-import connectDB from '../../../lib/mongodb';
-import Pronoun from '../../../models/Pronoun';
+import { NextResponse } from "next/server";
+import { query } from "../../../lib/postgresql";
 
 export async function GET() {
   try {
-    await connectDB();
-    const pronouns = await Pronoun.find();
-    return NextResponse.json(pronouns);
+    const result = await query(`
+      SELECT id, type, pronouns
+      FROM pronouns
+      ORDER BY id
+    `);
+
+    return NextResponse.json(result.rows);
   } catch (error) {
+    console.error("Database error:", error);
     return NextResponse.json(
-      { message: (error as Error).message },
+      { message: "Database error occurred" },
       { status: 500 }
     );
   }

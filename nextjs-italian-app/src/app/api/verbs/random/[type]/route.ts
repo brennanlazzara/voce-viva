@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '../../../../../lib/mongodb';
-import Verb from '../../../../../models/Verb';
+import { NextRequest, NextResponse } from "next/server";
+import { query } from "../../../../../lib/postgresql";
 
 type Params = {
   type: string;
@@ -12,14 +11,32 @@ export async function GET(
 ) {
   try {
     const { type } = await params;
-    await connectDB();
-    const count = await Verb.countDocuments({ type });
-    const random = Math.floor(Math.random() * count);
-    const verb = await Verb.findOne({ type }).skip(random);
-    return NextResponse.json(verb);
+    const result = await query(
+      `
+      SELECT id, infinitive, type, definition, auxiliary_verb,
+             regular_presente_indicativo as "regularPresenteIndicativo",
+             regular_passato_prossimo as "regularPassatoProssimo",
+             conjugations
+      FROM verbs
+      WHERE type = $1
+      ORDER BY RANDOM()
+      LIMIT 1
+    `,
+      [type]
+    );
+
+    if (result.rows.length === 0) {
+      return NextResponse.json(
+        { message: `No ${type} verbs found` },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(result.rows[0]);
   } catch (error) {
+    console.error("Database error:", error);
     return NextResponse.json(
-      { message: (error as Error).message },
+      { message: "Database error occurred" },
       { status: 500 }
     );
   }

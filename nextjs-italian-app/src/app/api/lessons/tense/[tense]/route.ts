@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '../../../../../lib/mongodb';
-import Lesson from '../../../../../models/Lesson';
+import { NextRequest, NextResponse } from "next/server";
+import { query } from "../../../../../lib/postgresql";
 
 type Params = {
   tense: string;
@@ -12,12 +11,20 @@ export async function GET(
 ) {
   try {
     const { tense } = await params;
-    await connectDB();
-    const lessons = await Lesson.find({ tense: tense });
-    return NextResponse.json(lessons);
+    const result = await query(
+      `
+      SELECT * FROM lessons
+      WHERE tense = $1
+      ORDER BY id
+    `,
+      [tense]
+    );
+
+    return NextResponse.json(result.rows);
   } catch (error) {
+    console.error("Database error:", error);
     return NextResponse.json(
-      { message: (error as Error).message },
+      { message: "Database error occurred" },
       { status: 500 }
     );
   }

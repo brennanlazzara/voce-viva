@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '../../../../../../lib/mongodb';
-import Lesson from '../../../../../../models/Lesson';
+import { NextRequest, NextResponse } from "next/server";
+import { query } from "../../../../../../lib/postgresql";
 
 type Params = {
   infinitive: string;
@@ -13,24 +12,27 @@ export async function GET(
 ) {
   try {
     const { infinitive, tense } = await params;
-    await connectDB();
-    const lesson = await Lesson.findOne({
-      type: 'irregular',
-      infinitive: infinitive,
-      tense: tense
-    });
+    const result = await query(
+      `
+      SELECT * FROM lessons
+      WHERE type = 'irregular' AND infinitive = $1 AND tense = $2
+      LIMIT 1
+    `,
+      [infinitive, tense]
+    );
 
-    if (!lesson) {
+    if (result.rows.length === 0) {
       return NextResponse.json(
-        { message: 'Irregular lesson not found for this verb and tense' },
+        { message: "Irregular lesson not found for this verb and tense" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(lesson);
+    return NextResponse.json(result.rows[0]);
   } catch (error) {
+    console.error("Database error:", error);
     return NextResponse.json(
-      { message: (error as Error).message },
+      { message: "Database error occurred" },
       { status: 500 }
     );
   }

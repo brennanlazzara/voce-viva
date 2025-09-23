@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
-import connectDB from '../../../../../lib/mongodb';
-import Pronoun from '../../../../../models/Pronoun';
+import { query } from '../../../../../lib/postgresql';
 
 export async function GET() {
   try {
-    await connectDB();
-    const pronouns = await Pronoun.findOne({ type: 'subject' });
+    const result = await query(`
+      SELECT pronouns
+      FROM pronouns
+      WHERE type = 'subject'
+      LIMIT 1
+    `);
 
-    if (!pronouns) {
+    if (result.rows.length === 0) {
       return NextResponse.json(
         { message: 'No subject pronouns found' },
         { status: 404 }
@@ -15,10 +18,11 @@ export async function GET() {
     }
 
     // Return the pronouns in the expected format
-    return NextResponse.json({ pronouns: pronouns.pronouns });
+    return NextResponse.json({ pronouns: result.rows[0].pronouns });
   } catch (error) {
+    console.error('Database error:', error);
     return NextResponse.json(
-      { message: (error as Error).message },
+      { message: 'Database error occurred' },
       { status: 500 }
     );
   }
