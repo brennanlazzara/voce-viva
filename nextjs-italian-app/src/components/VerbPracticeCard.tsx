@@ -109,10 +109,10 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
 
   const getVerbTypeColor = () => {
     switch (verbType) {
-      case "are": return "bg-green-100 text-green-800 border-green-200";
-      case "ere": return "bg-blue-100 text-blue-800 border-blue-200";
-      case "ire": return "bg-purple-100 text-purple-800 border-purple-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case "are": return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-700";
+      case "ere": return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-700";
+      case "ire": return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-700";
+      default: return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600";
     }
   };
 
@@ -132,13 +132,13 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
   const hint = getHintText();
 
   return (
-    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 max-w-sm mx-auto">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 max-w-sm mx-auto">
       {/* Header with Title and Hint Button */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h3>
         <button
           onClick={() => setIsHintDialogOpen(true)}
-          className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
+          className="p-2 text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200"
           title="Show hint"
         >
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -160,7 +160,7 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
         className={`w-full h-40 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-500 transform hover:scale-105 mb-6 ${
           isFlipped
             ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg'
-            : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300'
+            : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-800 dark:text-gray-200 hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-600 dark:hover:to-gray-500'
         }`}
         onClick={() => setIsFlipped(!isFlipped)}
       >
@@ -178,7 +178,7 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
 
       {/* Card Instructions */}
       {!isFlipped && (
-        <p className="text-sm text-gray-500 text-center mb-6 italic">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6 italic">
           💡 Click the card to reveal the verb
         </p>
       )}
@@ -186,7 +186,7 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
       {/* Input Section */}
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Your Answer:
           </label>
           <input
@@ -195,7 +195,7 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
             onKeyDown={handleKeyPress}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
+            className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg bg-white dark:bg-gray-700 dark:text-white"
           />
         </div>
 
@@ -220,8 +220,8 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
         {feedback && (
           <div className={`text-center p-4 rounded-lg font-bold text-lg ${
             feedback === "correct"
-              ? "bg-green-100 text-green-800 border border-green-200"
-              : "bg-red-100 text-red-800 border border-red-200"
+              ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-700"
+              : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700"
           }`}>
             {feedback === "correct" ? "🎉 Perfetto! Correct!" : "❌ Incorrect. Try again!"}
           </div>
@@ -229,7 +229,7 @@ function VerbPracticeCard({ verbType, tense, mood, title }: VerbPracticeCardProp
 
         {/* Study Tools */}
         <div className="border-t pt-4 space-y-3">
-          <p className="text-sm font-medium text-gray-700 text-center">Study Tools:</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">Study Tools:</p>
           <div className="grid grid-cols-1 gap-2">
             <button
               onClick={() => setIsVerbTreeOpen(true)}
