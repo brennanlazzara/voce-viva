@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 
 interface VerbData {
   infinitive: string;
-  type: string;
+  type: "are" | "ere" | "ire";
   definition: string;
   regularPresenteIndicativo?: boolean;
   auxiliaryVerb?: string;
@@ -49,8 +49,8 @@ export const useVerbData = () => {
 
   const fetchRandomVerb = useCallback(async (filterOptions: FilterOptions = {}): Promise<VerbData> => {
     setIsLoading(true);
+    const { regularOnly = null } = filterOptions;
     try {
-      const { regularOnly = null } = filterOptions;
 
       let isValidVerb = false;
       let data = null;
@@ -103,19 +103,19 @@ export const useVerbData = () => {
       // Fallback to static verbs if API fails
       const fallbackVerbs = {
         are: [
-          { infinitive: "parlare", definition: "to speak", type: "are", regularPresenteIndicativo: true },
-          { infinitive: "cantare", definition: "to sing", type: "are", regularPresenteIndicativo: true },
-          { infinitive: "giocare", definition: "to play", type: "are", regularPresenteIndicativo: true },
+          { infinitive: "parlare", definition: "to speak", type: "are" as const, regularPresenteIndicativo: true },
+          { infinitive: "cantare", definition: "to sing", type: "are" as const, regularPresenteIndicativo: true },
+          { infinitive: "giocare", definition: "to play", type: "are" as const, regularPresenteIndicativo: true },
         ],
         ere: [
-          { infinitive: "vendere", definition: "to sell", type: "ere", regularPresenteIndicativo: true },
-          { infinitive: "credere", definition: "to believe", type: "ere", regularPresenteIndicativo: true },
-          { infinitive: "scrivere", definition: "to write", type: "ere", regularPresenteIndicativo: true },
+          { infinitive: "vendere", definition: "to sell", type: "ere" as const, regularPresenteIndicativo: true },
+          { infinitive: "credere", definition: "to believe", type: "ere" as const, regularPresenteIndicativo: true },
+          { infinitive: "scrivere", definition: "to write", type: "ere" as const, regularPresenteIndicativo: true },
         ],
         ire: [
-          { infinitive: "dormire", definition: "to sleep", type: "ire", regularPresenteIndicativo: true },
-          { infinitive: "partire", definition: "to leave", type: "ire", regularPresenteIndicativo: true },
-          { infinitive: "aprire", definition: "to open", type: "ire", regularPresenteIndicativo: true },
+          { infinitive: "dormire", definition: "to sleep", type: "ire" as const, regularPresenteIndicativo: true },
+          { infinitive: "partire", definition: "to leave", type: "ire" as const, regularPresenteIndicativo: true },
+          { infinitive: "aprire", definition: "to open", type: "ire" as const, regularPresenteIndicativo: true },
         ],
       };
 
