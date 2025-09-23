@@ -86,15 +86,22 @@ function VerbPracticeCard({
         case "Tu":
           return `${stem}i`;
         case "Lui/Lei":
-          return `${stem}${ending === "are" ? "a" : "e"}`;
+          if (ending === "are") return `${stem}a`;
+          if (ending === "ere") return `${stem}e`;
+          if (ending === "ire") return `${stem}e`;
+          return `${stem}e`;
         case "Noi":
           return `${stem}iamo`;
         case "Voi":
-          return `${stem}${
-            ending === "are" ? "ate" : ending === "ere" ? "ete" : "ite"
-          }`;
+          if (ending === "are") return `${stem}ate`;
+          if (ending === "ere") return `${stem}ete`;
+          if (ending === "ire") return `${stem}ite`;
+          return `${stem}ite`;
         case "Loro":
-          return `${stem}${ending === "are" ? "ano" : "ono"}`;
+          if (ending === "are") return `${stem}ano`;
+          if (ending === "ere") return `${stem}ono`;
+          if (ending === "ire") return `${stem}ono`;
+          return `${stem}ono`;
         default:
           return verb;
       }
