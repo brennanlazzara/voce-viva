@@ -1,4 +1,53 @@
+"use client";
+
+import { useState } from "react";
+
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setSubmitStatus("error");
+      }
+    } catch (error) {
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
@@ -13,13 +62,33 @@ export default function Contact() {
               Send us a Message
             </h2>
 
-            <form className="space-y-4">
+            {submitStatus === "success" && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-green-800">
+                  Message sent successfully! We&apos;ll get back to you soon.
+                </p>
+              </div>
+            )}
+
+            {submitStatus === "error" && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-800">
+                  Failed to send message. Please try again.
+                </p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Name
                 </label>
                 <input
                   type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Your name"
                 />
@@ -31,6 +100,10 @@ export default function Contact() {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="your.email@example.com"
                 />
@@ -41,6 +114,10 @@ export default function Contact() {
                   Message
                 </label>
                 <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Tell us about your experience learning Italian verbs..."
@@ -49,9 +126,10 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                disabled={isSubmitting}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
               >
-                Send Message
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>
@@ -63,14 +141,21 @@ export default function Contact() {
                 Get in Touch
               </h2>
 
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold text-gray-700">📧 Email</h3>
-                  <p className="text-gray-600">hello@italianverbmaster.com</p>
-                </div>
+              <>
+                <h3 className="font-semibold text-gray-700">🐙 Social</h3>
+                <a
+                  href="https://www.linkedin.com/in/brennanlazzara/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  Linkedin
+                </a>
+              </>
 
+              <div className="space-y-4 mt-4">
                 <div>
-                  <h3 className="font-semibold text-gray-700">🐙 GitHub</h3>
+                  <h3 className="font-semibold text-gray-700">🐱 GitHub</h3>
                   <a
                     href="https://github.com/brennanlazzara"
                     target="_blank"
@@ -82,14 +167,18 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-700">🕒 Response Time</h3>
+                  <h3 className="font-semibold text-gray-700">
+                    🕒 Response Time
+                  </h3>
                   <p className="text-gray-600">Usually within 24 hours</p>
                 </div>
               </div>
             </div>
 
             <div className="bg-green-50 border-l-4 border-green-400 p-4">
-              <h3 className="font-semibold text-green-800">💡 Feature Requests</h3>
+              <h3 className="font-semibold text-green-800">
+                💡 Feature Requests
+              </h3>
               <p className="text-green-700 mt-1">
                 Have ideas for new features? We'd love to hear them!
               </p>
