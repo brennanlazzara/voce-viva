@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import VerbPracticeCard from "../components/VerbPracticeCard";
+import IrregularVerbPracticeCard from "../components/IrregularVerbPracticeCard";
 import { useState, useEffect } from "react";
 import { usePhraseData } from "../hooks/usePhraseData";
 
@@ -43,7 +44,8 @@ export default function Home() {
             </div>
           </div>
           <p className="text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Master Italian verb conjugations with interactive exercises and beautiful learning tools
+            Master Italian verb conjugations with interactive exercises and
+            beautiful learning tools
           </p>
         </div>
 
@@ -77,7 +79,9 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
               🎯 Choose Your Practice Mode
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">Select a mood and tense to practice</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              Select a mood and tense to practice
+            </p>
           </div>
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <div>
@@ -104,9 +108,13 @@ export default function Home() {
                 className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg bg-gray-50 dark:bg-gray-700 dark:text-white hover:bg-white dark:hover:bg-gray-600"
               >
                 <option value="presente">Presente (Present)</option>
-                <option value="passato-prossimo">Passato Prossimo (Present Perfect)</option>
+                <option value="passato-prossimo">
+                  Passato Prossimo (Present Perfect)
+                </option>
                 <option value="imperfetto">Imperfetto (Imperfect)</option>
-                <option value="futuro-semplice">Futuro Semplice (Simple Future)</option>
+                <option value="futuro-semplice">
+                  Futuro Semplice (Simple Future)
+                </option>
               </select>
             </div>
           </div>
@@ -118,9 +126,11 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
               📚 Interactive Practice Cards
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">Click on each card to practice different verb types</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              Click on each card to practice different verb types
+            </p>
           </div>
-          <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <div className="grid xl:grid-cols-4 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
             <VerbPracticeCard
               verbType="are"
               tense={selectedTense}
@@ -139,6 +149,12 @@ export default function Home() {
               mood={selectedMood}
               title="Practice -IRE Verbs"
             />
+            <IrregularVerbPracticeCard
+              verbType="ere"
+              tense={selectedTense}
+              mood={selectedMood}
+              title="Irregular Verbs"
+            />
           </div>
         </div>
 
@@ -148,7 +164,9 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-300 mb-2">
               🚀 Quick Access Links
             </h2>
-            <p className="text-blue-600 dark:text-blue-300">Jump to specific tenses and moods</p>
+            <p className="text-blue-600 dark:text-blue-300">
+              Jump to specific tenses and moods
+            </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <a
@@ -157,8 +175,12 @@ export default function Home() {
             >
               <div className="text-center">
                 <div className="text-3xl mb-2">🌟</div>
-                <div className="text-blue-600 dark:text-blue-400 font-bold text-lg group-hover:text-blue-700 dark:group-hover:text-blue-300">Presente Indicativo</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Most common tense</div>
+                <div className="text-blue-600 dark:text-blue-400 font-bold text-lg group-hover:text-blue-700 dark:group-hover:text-blue-300">
+                  Presente Indicativo
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Most common tense
+                </div>
               </div>
             </a>
             <a
@@ -167,8 +189,12 @@ export default function Home() {
             >
               <div className="text-center">
                 <div className="text-3xl mb-2">📅</div>
-                <div className="text-green-600 dark:text-green-400 font-bold text-lg group-hover:text-green-700 dark:group-hover:text-green-300">Passato Prossimo</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Past tense</div>
+                <div className="text-green-600 dark:text-green-400 font-bold text-lg group-hover:text-green-700 dark:group-hover:text-green-300">
+                  Passato Prossimo
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Past tense
+                </div>
               </div>
             </a>
             <a
@@ -177,8 +203,12 @@ export default function Home() {
             >
               <div className="text-center">
                 <div className="text-3xl mb-2">🎭</div>
-                <div className="text-purple-600 dark:text-purple-400 font-bold text-lg group-hover:text-purple-700 dark:group-hover:text-purple-300">Congiuntivo Presente</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Subjunctive mood</div>
+                <div className="text-purple-600 dark:text-purple-400 font-bold text-lg group-hover:text-purple-700 dark:group-hover:text-purple-300">
+                  Congiuntivo Presente
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Subjunctive mood
+                </div>
               </div>
             </a>
           </div>
