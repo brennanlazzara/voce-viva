@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
 interface VerbTreeGraphDialogProps {
   isOpen: boolean;
@@ -8,28 +8,74 @@ interface VerbTreeGraphDialogProps {
   title: string;
   tense: string;
   verbType: string;
+  currentVerb?: {
+    infinitive: string;
+    definition: string;
+    conjugations?: Record<string, any> | null;
+  };
 }
 
-function VerbTreeGraphDialog({ isOpen, onClose, title, tense, verbType }: VerbTreeGraphDialogProps) {
+function VerbTreeGraphDialog({
+  isOpen,
+  onClose,
+  title,
+  tense,
+  verbType,
+  currentVerb,
+}: VerbTreeGraphDialogProps) {
   if (!isOpen) return null;
 
-  // Sample verb tree data (in a real app this would come from API)
+  // Get verb tree data - use current verb if available, otherwise fallback to regular patterns
   const getVerbTreeData = () => {
-    const baseVerb = verbType === 'are' ? 'parlare' : verbType === 'ere' ? 'vendere' : 'dormire';
-    const stem = baseVerb.slice(0, -3);
+    if (
+      currentVerb &&
+      currentVerb.conjugations &&
+      currentVerb.conjugations.presenteIndicativo
+    ) {
+      // Use actual irregular conjugations from database
+      const conjugations = currentVerb.conjugations.presenteIndicativo;
+      return {
+        infinitive: currentVerb.infinitive,
+        definition: currentVerb.definition,
+        stem: currentVerb.infinitive.slice(0, -3),
+        isIrregular: true,
+        examples: [
+          `${conjugations.io} (Io)`,
+          `${conjugations.tu} (Tu)`,
+          `${conjugations.luiLei} (Lui/Lei)`,
+          `${conjugations.noi} (Noi)`,
+          `${conjugations.voi} (Voi)`,
+          `${conjugations.loro} (Loro)`,
+        ],
+      };
+    } else {
+      // Fallback to regular verb patterns
+      const baseVerb =
+        currentVerb?.infinitive ||
+        (verbType === "are"
+          ? "parlare"
+          : verbType === "ere"
+          ? "vendere"
+          : "dormire");
+      const stem = baseVerb.slice(0, -3);
 
-    return {
-      infinitive: baseVerb,
-      stem: stem,
-      examples: [
-        `${stem}o (Io)`,
-        `${stem}i (Tu)`,
-        `${stem}${verbType === 'are' ? 'a' : 'e'} (Lui/Lei)`,
-        `${stem}iamo (Noi)`,
-        `${stem}${verbType === 'are' ? 'ate' : verbType === 'ere' ? 'ete' : 'ite'} (Voi)`,
-        `${stem}${verbType === 'are' ? 'ano' : 'ono'} (Loro)`,
-      ]
-    };
+      return {
+        infinitive: baseVerb,
+        definition: currentVerb?.definition || "example verb",
+        stem: stem,
+        isIrregular: false,
+        examples: [
+          `${stem}o (Io)`,
+          `${stem}i (Tu)`,
+          `${stem}${verbType === "are" ? "a" : "e"} (Lui/Lei)`,
+          `${stem}iamo (Noi)`,
+          `${stem}${
+            verbType === "are" ? "ate" : verbType === "ere" ? "ete" : "ite"
+          } (Voi)`,
+          `${stem}${verbType === "are" ? "ano" : "ono"} (Loro)`,
+        ],
+      };
+    }
   };
 
   const verbData = getVerbTreeData();
@@ -47,15 +93,23 @@ function VerbTreeGraphDialog({ isOpen, onClose, title, tense, verbType }: VerbTr
         <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold text-gray-900">
-              {title}
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -63,14 +117,34 @@ function VerbTreeGraphDialog({ isOpen, onClose, title, tense, verbType }: VerbTr
           {/* Content */}
           <div className="space-y-6">
             {/* Verb Info */}
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div
+              className={`${
+                verbData.isIrregular
+                  ? "bg-orange-50 border border-orange-200"
+                  : "bg-gray-50"
+              } rounded-lg p-4`}
+            >
               <h4 className="text-lg font-medium text-gray-900 mb-2">
+                {verbData.isIrregular && (
+                  <span className="text-orange-600">⚡ Irregular </span>
+                )}
                 Verb Tree: {verbData.infinitive}
               </h4>
+              <p className="text-gray-600 mb-2">
+                <span className="font-medium">Definition:</span>{" "}
+                {verbData.definition}
+              </p>
               <p className="text-gray-600">
                 <span className="font-medium">Tense:</span> {tense} |
-                <span className="font-medium"> Type:</span> -{verbType.toUpperCase()} |
+                <span className="font-medium"> Type:</span> -
+                {verbType.toUpperCase()} |
                 <span className="font-medium"> Stem:</span> {verbData.stem}
+                {verbData.isIrregular && (
+                  <span className="text-orange-600 font-medium">
+                    {" "}
+                    | Status: IRREGULAR
+                  </span>
+                )}
               </p>
             </div>
 
@@ -97,21 +171,73 @@ function VerbTreeGraphDialog({ isOpen, onClose, title, tense, verbType }: VerbTr
               {/* Branches */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {verbData.examples.map((example, index) => (
-                  <div key={index} className="bg-white border border-gray-200 rounded-md p-3 text-center shadow-sm">
-                    <span className="font-mono text-sm text-gray-800">{example}</span>
+                  <div
+                    key={index}
+                    className="bg-white border border-gray-200 rounded-md p-3 text-center shadow-sm"
+                  >
+                    <span className="font-mono text-sm text-gray-800">
+                      {example}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Learning Tips */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-              <h5 className="font-medium text-yellow-800 mb-2">💡 Learning Tips</h5>
-              <ul className="text-yellow-700 text-sm space-y-1">
-                <li>• Focus on the stem: <strong>{verbData.stem}</strong></li>
-                <li>• Add the appropriate ending for each pronoun</li>
-                <li>• Notice the pattern for -{verbType.toUpperCase()} verbs</li>
-                <li>• Practice with different verbs of the same type</li>
+            <div
+              className={`${
+                verbData.isIrregular
+                  ? "bg-red-50 border border-red-200"
+                  : "bg-yellow-50 border border-yellow-200"
+              } rounded-md p-4`}
+            >
+              <h5
+                className={`font-medium mb-2 ${
+                  verbData.isIrregular ? "text-red-800" : "text-yellow-800"
+                }`}
+              >
+                💡 Learning Tips
+              </h5>
+              <ul
+                className={`text-sm space-y-1 ${
+                  verbData.isIrregular ? "text-red-700" : "text-yellow-700"
+                }`}
+              >
+                {verbData.isIrregular ? (
+                  <>
+                    <li>
+                      • <strong>IRREGULAR VERB:</strong> Each form must be
+                      memorized individually
+                    </li>
+                    <li>
+                      • The stem <strong>{verbData.stem}</strong> doesn't follow
+                      regular patterns
+                    </li>
+                    <li>
+                      • Focus on memorizing each conjugation:{" "}
+                      {verbData.examples.join(", ")}
+                    </li>
+                    <li>
+                      • Practice frequently - irregular verbs are often the most
+                      common ones
+                    </li>
+                    <li>
+                      • Group similar irregular verbs together for easier
+                      learning
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      • Focus on the stem: <strong>{verbData.stem}</strong>
+                    </li>
+                    <li>• Add the appropriate ending for each pronoun</li>
+                    <li>
+                      • Notice the pattern for -{verbType.toUpperCase()} verbs
+                    </li>
+                    <li>• Practice with different verbs of the same type</li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
@@ -127,7 +253,7 @@ function VerbTreeGraphDialog({ isOpen, onClose, title, tense, verbType }: VerbTr
             <button
               onClick={() => {
                 /* In a real app, this would save progress */
-                alert('Progress saved!');
+                alert("Progress saved!");
               }}
               className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
             >
