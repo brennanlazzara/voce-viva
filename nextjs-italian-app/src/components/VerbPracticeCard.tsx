@@ -113,6 +113,10 @@ function VerbPracticeCard({
 
   const checkAnswer = () => {
     const correctAnswer = conjugateVerb(currentPronoun, currentVerb.infinitive);
+    console.log('Debug - Pronoun:', currentPronoun);
+    console.log('Debug - Verb:', currentVerb.infinitive);
+    console.log('Debug - Expected answer:', correctAnswer);
+    console.log('Debug - User answer:', userAnswer.trim().toLowerCase());
     const isCorrect =
       userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase();
 
