@@ -11,9 +11,8 @@ export const usePhraseData = () => {
   const [isLoading, setIsLoading] = useState(false);
   const cacheRef = useRef<PhraseData[] | null>(null);
 
-  // Use Next.js internal API routes
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  // Use relative URLs for API calls (works in both development and production)
+  const API_BASE_URL = "";
 
   const fetchPhrases = useCallback(async (): Promise<PhraseData[]> => {
     // Return cached data if available
