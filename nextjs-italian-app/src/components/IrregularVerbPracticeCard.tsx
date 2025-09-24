@@ -354,6 +354,7 @@ function IrregularVerbPracticeCard({
         title="Irregular Verb Tree Graphs"
         tense={tense}
         verbType={verbType}
+        currentVerb={currentVerb}
       />
 
       <LessonDialog
@@ -361,6 +362,7 @@ function IrregularVerbPracticeCard({
         onClose={() => setIsLessonOpen(false)}
         tense={tense}
         mood={mood}
+        currentVerb={currentVerb}
       />
     </div>
   );
