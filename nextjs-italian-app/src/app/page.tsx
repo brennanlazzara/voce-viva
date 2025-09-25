@@ -121,7 +121,7 @@ export default function Home() {
         </div>
 
         {/* Practice Cards Section */}
-        <div className="mb-16">
+        <div className="mb-8 bg-gradient-to-r from-blue-400 via-green-300 to-emerald-400 dark:from-blue-900 dark:via-green-900 dark:to-emerald-900 rounded-xl shadow-lg py-6 px-8 flex flex-col items-center justify-center">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
               📚 Interactive Practice Cards
@@ -130,6 +130,22 @@ export default function Home() {
               Click on each card to practice different verb types
             </p>
           </div>
+          {/* Dynamic Banner for Selected Mood & Tense */}
+          {selectedMood && selectedTense && (
+            <div>
+              <div className="mb-8">
+                <span className="text-lg font-semibold text-white mb-2">
+                  You are practicing:{" "}
+                </span>
+                <span className="text-2xl font-bold text-white">
+                  {selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1)}{" "}
+                  &mdash;{" "}
+                  {selectedTense.charAt(0).toUpperCase() +
+                    selectedTense.slice(1)}
+                </span>
+              </div>
+            </div>
+          )}
           <div className="grid xl:grid-cols-4 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
             <VerbPracticeCard
               verbType="are"
