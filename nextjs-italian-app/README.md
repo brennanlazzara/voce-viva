@@ -1,4 +1,6 @@
-# Italian Language Learning Program 🇮🇹
+# VoceViva 🇮🇹
+
+_Your living voice in Italian_
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.32-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org/)
@@ -7,7 +9,7 @@
 
 ## Description
 
-Welcome to our **Italian Language Learning Program**! This modern, interactive web application is designed to help learners of all levels master Italian verb conjugations through engaging exercises, dynamic lessons, and beautiful learning tools.
+Welcome to **VoceViva**! This modern, interactive web application is designed to help learners of all levels master Italian verb conjugations through engaging exercises, dynamic lessons, and beautiful learning tools. VoceViva is your gateway to bringing Italian to life - starting with verb conjugations and expanding to comprehensive language mastery.
 
 ## 🌟 Key Features
 
@@ -289,4 +291,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Happy Learning! Buona fortuna con l'italiano! 🎉**
+**Happy Learning with VoceViva! Buona fortuna con l'italiano! 🎉**

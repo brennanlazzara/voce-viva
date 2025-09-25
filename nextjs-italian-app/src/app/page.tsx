@@ -38,14 +38,14 @@ export default function Home() {
             <div className="text-6xl animate-pulse">🇮🇹</div>
             <div>
               <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                Italian Verb Practice
+                VoceViva
               </h1>
               <div className="h-1 w-32 bg-gradient-to-r from-blue-500 to-green-500 mx-auto mt-2 rounded-full"></div>
             </div>
           </div>
           <p className="text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Master Italian verb conjugations with interactive exercises and
-            beautiful learning tools
+            Your living voice in Italian - Master verb conjugations with
+            interactive exercises and beautiful learning tools
           </p>
         </div>
 

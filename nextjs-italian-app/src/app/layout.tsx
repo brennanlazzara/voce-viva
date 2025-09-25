@@ -4,8 +4,9 @@ import { SessionProvider } from "../components/SessionProvider";
 import Header from "../components/Header";
 
 export const metadata: Metadata = {
-  title: "Italian Verb Master",
-  description: "Learn Italian verb conjugations with interactive exercises",
+  title: "VoceViva - Your Living Voice in Italian",
+  description:
+    "Your living voice in Italian - Master verb conjugations with interactive exercises and beautiful learning tools",
 };
 
 export default function RootLayout({
