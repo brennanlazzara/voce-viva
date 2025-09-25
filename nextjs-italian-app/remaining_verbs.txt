@@ -1,0 +1,4 @@
+ infinitive | type | auxiliary_verb 
+------------+------+----------------
+(0 rows)
+
