@@ -6,7 +6,12 @@ interface VerbData {
   definition: string;
   regularPresenteIndicativo?: boolean;
   auxiliaryVerb?: string;
-  conjugations?: any;
+  auxiliary_verb?: string;
+  conjugations?: {
+    [tense: string]: {
+      [pronoun: string]: string;
+    };
+  };
 }
 
 interface FilterOptions {
@@ -108,6 +113,7 @@ export const useVerbData = () => {
           definition: data.definition,
           regularPresenteIndicativo: data.regularPresenteIndicativo,
           auxiliaryVerb: data.auxiliaryVerb,
+          auxiliary_verb: data.auxiliary_verb,
           conjugations: data.conjugations,
         };
       } catch (error) {

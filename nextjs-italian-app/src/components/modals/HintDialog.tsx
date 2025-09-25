@@ -8,6 +8,7 @@ interface HintDialogProps {
   hint: {
     type: string;
     endings: string[];
+    tense?: string;
   };
 }
 
@@ -46,9 +47,16 @@ function HintDialog({ isOpen, onClose, hint }: HintDialogProps) {
               <p className="text-blue-800 font-medium mb-2">
                 {hint.type}
               </p>
+              {hint.tense && (
+                <p className="text-blue-700 font-medium mb-2">
+                  {hint.tense}
+                </p>
+              )}
               <div className="text-blue-700">
-                <p className="text-sm mb-2">Conjugation endings for this verb type:</p>
-                <div className="grid grid-cols-3 gap-2">
+                <p className="text-sm mb-2">
+                  {hint.tense ? "Conjugated forms:" : "Conjugation endings for this verb type:"}
+                </p>
+                <div className="grid grid-cols-2 gap-2">
                   {hint.endings.map((ending, index) => (
                     <div key={index} className="bg-white px-2 py-1 rounded text-center text-sm font-mono">
                       {ending}
@@ -60,7 +68,10 @@ function HintDialog({ isOpen, onClose, hint }: HintDialogProps) {
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
               <p className="text-yellow-800 text-sm">
-                💡 <strong>Tip:</strong> Remove the infinitive ending (-are, -ere, -ire) and add the appropriate ending based on the pronoun.
+                💡 <strong>Tip:</strong> {hint.tense
+                  ? "Passato Prossimo requires the auxiliary verb + past participle. Match the pronoun with the correct auxiliary form!"
+                  : "Remove the infinitive ending (-are, -ere, -ire) and add the appropriate ending based on the pronoun."
+                }
               </p>
             </div>
           </div>

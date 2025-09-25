@@ -21,10 +21,27 @@ function VerbPracticeCard({
   mood,
   title,
 }: VerbPracticeCardProps) {
-  const [currentVerb, setCurrentVerb] = useState({
+  const [currentVerb, setCurrentVerb] = useState<{
+    infinitive: string;
+    definition: string;
+    type: "are" | "ere" | "ire";
+    conjugations?: {
+      passatoProssimo?: {
+        conjugations?: { [key: string]: string };
+        pastParticiple?: { base?: string };
+      };
+      presenteIndicativo?: {
+        conjugations?: { [key: string]: string };
+      };
+      // Add other tenses/moods as needed
+    };
+    auxiliary_verb?: string;
+  }>({
     infinitive: "",
     definition: "",
     type: verbType,
+    conjugations: undefined,
+    auxiliary_verb: undefined,
   });
   const [currentPronoun, setCurrentPronoun] = useState(PRONOUNS[0]);
   const [userAnswer, setUserAnswer] = useState("");
@@ -64,6 +81,8 @@ function VerbPracticeCard({
         infinitive: "parlare",
         definition: "to speak",
         type: verbType,
+        conjugations: undefined,
+        auxiliary_verb: undefined,
       };
 
       setCurrentPronoun(fallbackPronoun);
@@ -76,34 +95,21 @@ function VerbPracticeCard({
 
   const conjugateVerb = (pronoun: string, verb: string) => {
     const stem = verb.slice(0, -3);
-    const ending = verb.slice(-3);
+    const pronounKey = pronoun.toLowerCase() === "lui/lei" ? "luiLei" : pronoun.toLowerCase();
 
-    // Simple presente indicativo conjugation
+    // Handle Passato Prossimo from database
+    if (tense === "passato-prossimo" && mood === "indicativo") {
+      const conjugations = currentVerb.conjugations?.passatoProssimo?.conjugations;
+      if (conjugations) {
+        return conjugations[pronounKey] || `${stem}[passato-prossimo]`;
+      }
+    }
+
+    // Handle Presente Indicativo from database
     if (tense === "presente" && mood === "indicativo") {
-      switch (pronoun) {
-        case "Io":
-          return `${stem}o`;
-        case "Tu":
-          return `${stem}i`;
-        case "Lui/Lei":
-          if (ending === "are") return `${stem}a`;
-          if (ending === "ere") return `${stem}e`;
-          if (ending === "ire") return `${stem}e`;
-          return `${stem}e`;
-        case "Noi":
-          return `${stem}iamo`;
-        case "Voi":
-          if (ending === "are") return `${stem}ate`;
-          if (ending === "ere") return `${stem}ete`;
-          if (ending === "ire") return `${stem}ite`;
-          return `${stem}ite`;
-        case "Loro":
-          if (ending === "are") return `${stem}ano`;
-          if (ending === "ere") return `${stem}ono`;
-          if (ending === "ire") return `${stem}ono`;
-          return `${stem}ono`;
-        default:
-          return verb;
+      const conjugations = currentVerb.conjugations?.presenteIndicativo?.conjugations;
+      if (conjugations) {
+        return conjugations[pronounKey] || `${stem}[presente]`;
       }
     }
 
@@ -149,6 +155,28 @@ function VerbPracticeCard({
   };
 
   const getHintText = () => {
+    if (tense === "passato-prossimo" && mood === "indicativo") {
+      const pastParticiple =
+        currentVerb.conjugations?.passatoProssimo?.pastParticiple?.base;
+      const auxiliary = currentVerb.auxiliary_verb || "avere";
+
+      const auxiliaryConjugations =
+        auxiliary === "essere"
+          ? ["sono", "sei", "è", "siamo", "siete", "sono"]
+          : ["ho", "hai", "ha", "abbiamo", "avete", "hanno"];
+
+      return {
+        type: `This is an -${verbType.toUpperCase()} verb (${
+          currentVerb.definition
+        })`,
+        tense: `Passato Prossimo uses ${auxiliary} + ${pastParticiple}`,
+        endings: auxiliaryConjugations.map(
+          (aux) =>
+            `${aux} ${pastParticiple}${auxiliary === "essere" ? "/a/i/e" : ""}`
+        ),
+      };
+    }
+
     const endings = {
       are: ["-o", "-i", "-a", "-iamo", "-ate", "-ano"],
       ere: ["-o", "-i", "-e", "-iamo", "-ete", "-ono"],
