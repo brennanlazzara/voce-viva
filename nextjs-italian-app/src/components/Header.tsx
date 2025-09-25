@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import LoginButton from './LoginButton';
-import UserProfile from './UserProfile';
-import ColorModeSwitcher from './ColorModeSwitcher';
-import { useState } from 'react';
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import LoginButton from "./LoginButton";
+import UserProfile from "./UserProfile";
+import ColorModeSwitcher from "./ColorModeSwitcher";
+import { useState } from "react";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -16,9 +16,15 @@ export default function Header() {
       name: "Indicativo",
       subtenses: [
         { name: "Presente", path: "/verb-conjugation/indicativo/presente" },
-        { name: "Passato Prossimo", path: "/verb-conjugation/indicativo/passato-prossimo" },
+        {
+          name: "Passato Prossimo",
+          path: "/verb-conjugation/indicativo/passato-prossimo",
+        },
         { name: "Imperfetto", path: "/verb-conjugation/indicativo/imperfetto" },
-        { name: "Futuro Semplice", path: "/verb-conjugation/indicativo/futuro-semplice" },
+        {
+          name: "Futuro Semplice",
+          path: "/verb-conjugation/indicativo/futuro-semplice",
+        },
       ],
     },
     {
@@ -26,7 +32,10 @@ export default function Header() {
       subtenses: [
         { name: "Presente", path: "/verb-conjugation/congiuntivo/presente" },
         { name: "Passato", path: "/verb-conjugation/congiuntivo/passato" },
-        { name: "Imperfetto", path: "/verb-conjugation/congiuntivo/imperfetto" },
+        {
+          name: "Imperfetto",
+          path: "/verb-conjugation/congiuntivo/imperfetto",
+        },
       ],
     },
     {
@@ -45,9 +54,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <span className="text-2xl">🇮🇹</span>
-            <span className="font-bold text-xl text-blue-600">
-              Italian Verb Master
-            </span>
+            <span className="font-bold text-xl text-blue-600">VoceViva</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -84,10 +91,16 @@ export default function Header() {
             </div>
 
             {/* Navigation Links */}
-            <Link href="/about" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <Link
+              href="/about"
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
               About
             </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <Link
+              href="/contact"
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
               Contact
             </Link>
 

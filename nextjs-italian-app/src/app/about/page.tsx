@@ -3,7 +3,7 @@ export default function About() {
     <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-blue-600 mb-6 text-center">
-          About Italian Verb Master
+          About VoceViva
         </h1>
 
         <div className="prose prose-lg mx-auto">
