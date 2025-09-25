@@ -56,7 +56,7 @@ function IrregularVerbPracticeCard({
         infinitive: verbData.infinitive,
         definition: verbData.definition,
         type: verbData.type,
-        conjugations: verbData.conjugations,
+        conjugations: verbData.conjugations ?? null,
       });
       setUserAnswer("");
       setIsFlipped(false);
