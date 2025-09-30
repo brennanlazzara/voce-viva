@@ -141,7 +141,12 @@ function IrregularVerbPracticeCard({
       return null;
     }
 
-    const presentConjugations = conjugations.presenteIndicativo;
+    // Handle both data structures:
+    // 1. Regular verbs: conjugations.presenteIndicativo.conjugations.io
+    // 2. Irregular verbs: conjugations.presenteIndicativo.io
+    const presenteIndicativo = conjugations.presenteIndicativo;
+    const presentConjugations =
+      presenteIndicativo.conjugations || presenteIndicativo;
 
     // Map display pronouns to database keys
     const pronounMap: { [key: string]: string } = {
