@@ -4,9 +4,17 @@ import React from "react";
 import {
   getPresenteIndicativoTree,
   getDefaultPresenteIndicativoTree,
-  getVerbTreeLearningTips,
-  type VerbTreeData,
+  getVerbTreeLearningTips as getPresenteTips,
+  type VerbTreeData as PresenteTreeData,
 } from "./content/presente-indicativo/tree";
+import {
+  getPassatoProssimoTree,
+  getDefaultPassatoProssimoTree,
+  getVerbTreeLearningTips as getPassatoTips,
+  type VerbTreeData as PassatoTreeData,
+} from "./content/passato-prossimo/tree";
+
+type VerbTreeData = PresenteTreeData | PassatoTreeData;
 
 interface VerbTreeGraphDialogProps {
   isOpen: boolean;
@@ -17,7 +25,19 @@ interface VerbTreeGraphDialogProps {
   currentVerb?: {
     infinitive: string;
     definition: string;
-    conjugations?: Record<string, any> | null;
+    conjugation: {
+      io: string | null;
+      tu: string | null;
+      luiLei: string | null;
+      noi: string | null;
+      voi: string | null;
+      loro: string | null;
+    } | null;
+    metadata: {
+      auxiliaryVerb?: string;
+      regularPresenteIndicativo?: boolean;
+      regularPassatoProssimo?: boolean;
+    };
   };
 }
 
@@ -33,48 +53,78 @@ function VerbTreeGraphDialog({
 
   // Get verb tree data - use current verb if available, otherwise fallback to regular patterns
   const getVerbTreeData = (): VerbTreeData => {
-    if (
-      currentVerb &&
-      currentVerb.conjugations &&
-      currentVerb.conjugations.presenteIndicativo
-    ) {
-      // Handle both data structures:
-      // 1. Regular verbs: conjugations.presenteIndicativo.conjugations.io
-      // 2. Irregular verbs: conjugations.presenteIndicativo.io
-      const presenteIndicativo = currentVerb.conjugations.presenteIndicativo;
-      const conjugations =
-        presenteIndicativo.conjugations || presenteIndicativo;
-      const isIrregular = !presenteIndicativo.conjugations;
+    const hasConjugations = currentVerb && currentVerb.conjugation;
 
-      return getPresenteIndicativoTree(
-        currentVerb.infinitive,
-        currentVerb.definition,
-        {
-          io: conjugations.io,
-          tu: conjugations.tu,
-          luiLei: conjugations.luiLei,
-          noi: conjugations.noi,
-          voi: conjugations.voi,
-          loro: conjugations.loro,
-        },
-        isIrregular
-      );
-    } else {
-      // Fallback to regular verb patterns
+    // Presente Indicativo
+    if (tense === "presente") {
+      if (hasConjugations) {
+        const isIrregular =
+          currentVerb.metadata.regularPresenteIndicativo === false;
+        return getPresenteIndicativoTree(
+          currentVerb.infinitive,
+          currentVerb.definition,
+          {
+            io: currentVerb.conjugation!.io!,
+            tu: currentVerb.conjugation!.tu!,
+            luiLei: currentVerb.conjugation!.luiLei!,
+            noi: currentVerb.conjugation!.noi!,
+            voi: currentVerb.conjugation!.voi!,
+            loro: currentVerb.conjugation!.loro!,
+          },
+          isIrregular
+        );
+      }
       return getDefaultPresenteIndicativoTree(
         verbType as "are" | "ere" | "ire",
         currentVerb?.infinitive,
         currentVerb?.definition
       );
     }
+
+    // Passato Prossimo
+    if (tense === "passato-prossimo") {
+      if (hasConjugations) {
+        const isIrregular =
+          currentVerb.metadata.regularPassatoProssimo === false;
+        return getPassatoProssimoTree(
+          {
+            infinitive: currentVerb.infinitive,
+            definition: currentVerb.definition,
+            auxiliaryVerb: currentVerb.metadata.auxiliaryVerb,
+          },
+          {
+            io: currentVerb.conjugation!.io!,
+            tu: currentVerb.conjugation!.tu!,
+            luiLei: currentVerb.conjugation!.luiLei!,
+            noi: currentVerb.conjugation!.noi!,
+            voi: currentVerb.conjugation!.voi!,
+            loro: currentVerb.conjugation!.loro!,
+          },
+          isIrregular
+        );
+      }
+      return getDefaultPassatoProssimoTree();
+    }
+
+    // Default fallback
+    return getDefaultPresenteIndicativoTree(
+      verbType as "are" | "ere" | "ire",
+      currentVerb?.infinitive,
+      currentVerb?.definition
+    );
   };
 
   const verbData = getVerbTreeData();
-  const learningTips = getVerbTreeLearningTips(
-    verbData.isIrregular,
-    verbData.stem,
-    verbType
-  );
+
+  // Get learning tips based on tense
+  const learningTips =
+    tense === "passato-prossimo"
+      ? getPassatoTips(
+          verbType as "are" | "ere" | "ire",
+          verbData.isIrregular,
+          (verbData as PassatoTreeData).auxiliaryVerb
+        )
+      : getPresenteTips(verbData.isIrregular, verbData.stem, verbType);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -135,6 +185,15 @@ function VerbTreeGraphDialog({
                 <span className="font-medium"> Type:</span> -
                 {verbType.toUpperCase()} |
                 <span className="font-medium"> Stem:</span> {verbData.stem}
+                {tense === "passato-prossimo" && (
+                  <>
+                    {" "}
+                    |<span className="font-medium"> Auxiliary:</span>{" "}
+                    {(verbData as PassatoTreeData).auxiliaryVerb} |
+                    <span className="font-medium"> Past Participle:</span>{" "}
+                    {(verbData as PassatoTreeData).pastParticiple}
+                  </>
+                )}
                 {verbData.isIrregular && (
                   <span className="text-orange-600 font-medium">
                     {" "}

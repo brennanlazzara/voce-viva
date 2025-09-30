@@ -4,8 +4,15 @@ import React from "react";
 import {
   getPresenteIndicativoLesson,
   getGeneralPresenteIndicativoLesson,
-  type LessonContent,
+  type LessonContent as PresenteLessonContent,
 } from "./content/presente-indicativo/lesson";
+import {
+  getPassatoProssimoLesson,
+  getGeneralPassatoProssimoLesson,
+  type LessonContent as PassatoLessonContent,
+} from "./content/passato-prossimo/lesson";
+
+type LessonContent = PresenteLessonContent | PassatoLessonContent;
 
 interface LessonDialogProps {
   isOpen: boolean;
@@ -15,7 +22,19 @@ interface LessonDialogProps {
   currentVerb?: {
     infinitive: string;
     definition: string;
-    conjugations?: Record<string, any> | null;
+    conjugation: {
+      io: string | null;
+      tu: string | null;
+      luiLei: string | null;
+      noi: string | null;
+      voi: string | null;
+      loro: string | null;
+    } | null;
+    metadata: {
+      auxiliaryVerb?: string;
+      regularPresenteIndicativo?: boolean;
+      regularPassatoProssimo?: boolean;
+    };
   };
 }
 
@@ -29,41 +48,56 @@ function LessonDialog({
   if (!isOpen) return null;
 
   const getLessonContent = (): LessonContent => {
-    const hasConjugations =
-      currentVerb &&
-      currentVerb.conjugations &&
-      currentVerb.conjugations.presenteIndicativo;
+    const hasConjugations = currentVerb && currentVerb.conjugation;
 
+    // Presente Indicativo
     if (tense === "presente" && mood === "indicativo") {
       if (hasConjugations) {
-        // Verb-specific lesson (both regular and irregular)
-        // Handle both data structures:
-        // 1. Regular verbs: conjugations.presenteIndicativo.conjugations.io
-        // 2. Irregular verbs: conjugations.presenteIndicativo.io
-        const presenteIndicativo =
-          currentVerb!.conjugations!.presenteIndicativo;
-        const conjugations =
-          presenteIndicativo.conjugations || presenteIndicativo;
-        const isIrregular = !presenteIndicativo.conjugations;
-
+        const isIrregular =
+          currentVerb.metadata.regularPresenteIndicativo === false;
         return getPresenteIndicativoLesson(
           {
-            infinitive: currentVerb!.infinitive,
-            definition: currentVerb!.definition,
+            infinitive: currentVerb.infinitive,
+            definition: currentVerb.definition,
             conjugations: {
-              io: conjugations.io,
-              tu: conjugations.tu,
-              luiLei: conjugations.luiLei,
-              noi: conjugations.noi,
-              voi: conjugations.voi,
-              loro: conjugations.loro,
+              io: currentVerb.conjugation!.io!,
+              tu: currentVerb.conjugation!.tu!,
+              luiLei: currentVerb.conjugation!.luiLei!,
+              noi: currentVerb.conjugation!.noi!,
+              voi: currentVerb.conjugation!.voi!,
+              loro: currentVerb.conjugation!.loro!,
             },
           },
           isIrregular
         );
       } else {
-        // General lesson
         return getGeneralPresenteIndicativoLesson();
+      }
+    }
+
+    // Passato Prossimo
+    if (tense === "passato-prossimo" && mood === "indicativo") {
+      if (hasConjugations) {
+        const isIrregular =
+          currentVerb.metadata.regularPassatoProssimo === false;
+        return getPassatoProssimoLesson(
+          {
+            infinitive: currentVerb.infinitive,
+            definition: currentVerb.definition,
+            conjugations: {
+              io: currentVerb.conjugation!.io!,
+              tu: currentVerb.conjugation!.tu!,
+              luiLei: currentVerb.conjugation!.luiLei!,
+              noi: currentVerb.conjugation!.noi!,
+              voi: currentVerb.conjugation!.voi!,
+              loro: currentVerb.conjugation!.loro!,
+            },
+            auxiliaryVerb: currentVerb.metadata.auxiliaryVerb,
+          },
+          isIrregular
+        );
+      } else {
+        return getGeneralPassatoProssimoLesson();
       }
     }
 
