@@ -61,7 +61,7 @@ function VerbPracticeCard({
 
   useEffect(() => {
     generateNewCard();
-  }, [verbType]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [verbType, tense, mood]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const generateNewCard = async () => {
     try {
