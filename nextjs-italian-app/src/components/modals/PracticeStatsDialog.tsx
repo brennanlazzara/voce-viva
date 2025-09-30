@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { getComingSoonStats } from "./content/presente-indicativo/stats";
 
 interface PracticeStatsDialogProps {
   isOpen: boolean;
@@ -18,6 +19,8 @@ function PracticeStatsDialog({
 }: PracticeStatsDialogProps) {
   if (!isOpen) return null;
 
+  const statsContent = getComingSoonStats(currentVerb?.infinitive);
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
@@ -32,8 +35,7 @@ function PracticeStatsDialog({
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              📊 Practice Stats
-              {currentVerb && ` - ${currentVerb.infinitive}`}
+              📊 {statsContent.title}
             </h3>
             <button
               onClick={onClose}
@@ -63,8 +65,7 @@ function PracticeStatsDialog({
                 Coming Soon!
               </h4>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                We&apos;re working on bringing you detailed practice statistics
-                and progress tracking.
+                {statsContent.description}
               </p>
 
               {/* Preview Features */}
@@ -73,59 +74,47 @@ function PracticeStatsDialog({
                   What&apos;s Coming:
                 </h5>
                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Accuracy tracking for each verb</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Practice frequency and streaks</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Difficulty ratings and mastery levels</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Personalized verb recommendations</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Progress charts and achievements</span>
-                  </li>
+                  {statsContent.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="text-green-500 mr-2">✓</span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
 
             {/* Mock Stats Preview */}
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 opacity-50">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    --
+            {statsContent.previewStats && (
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 opacity-50">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                      {statsContent.previewStats.accuracy}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Accuracy
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Accuracy
+                  <div>
+                    <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                      {statsContent.previewStats.timesPracticed}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Times Practiced
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                    --
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Times Practiced
-                  </div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                    --
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Mastery Level
+                  <div>
+                    <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                      {statsContent.previewStats.masteryLevel}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Mastery Level
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Footer */}

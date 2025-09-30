@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { getComingSoonAudio } from "./content/presente-indicativo/audio";
 
 interface AudioPronunciationDialogProps {
   isOpen: boolean;
@@ -18,6 +19,8 @@ function AudioPronunciationDialog({
 }: AudioPronunciationDialogProps) {
   if (!isOpen) return null;
 
+  const audioContent = getComingSoonAudio(currentVerb?.infinitive);
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
@@ -32,8 +35,7 @@ function AudioPronunciationDialog({
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              🔊 Audio & Pronunciation
-              {currentVerb && ` - ${currentVerb.infinitive}`}
+              🔊 {audioContent.title}
             </h3>
             <button
               onClick={onClose}
@@ -63,8 +65,7 @@ function AudioPronunciationDialog({
                 Coming Soon!
               </h4>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                We&apos;re working on bringing you native Italian pronunciation
-                guides and audio playback.
+                {audioContent.description}
               </p>
 
               {/* Preview Features */}
@@ -73,30 +74,12 @@ function AudioPronunciationDialog({
                   What&apos;s Coming:
                 </h5>
                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Native speaker audio for each conjugation</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Syllable breakdown and stress patterns</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>IPA (International Phonetic Alphabet) notation</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Common pronunciation mistakes to avoid</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Slow and normal speed playback</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span>Regional pronunciation variations</span>
-                  </li>
+                  {audioContent.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="text-green-500 mr-2">✓</span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
