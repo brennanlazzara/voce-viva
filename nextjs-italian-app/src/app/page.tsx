@@ -49,30 +49,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Phrase of the Day */}
-        {dailyPhrase && (
-          <div className="bg-gradient-to-r from-emerald-100 via-white to-blue-100 dark:from-emerald-900/20 dark:via-gray-800 dark:to-blue-900/20 rounded-2xl p-8 mb-12 border border-emerald-200 dark:border-emerald-700 shadow-lg">
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
-                <span>⭐</span>
-                Phrase of the Day
-                <span>⭐</span>
-              </div>
-              <div className="space-y-3">
-                <p className="text-3xl font-bold text-emerald-800 dark:text-emerald-300 italic">
-                  "{dailyPhrase.phrase}"
-                </p>
-                <p className="text-xl text-blue-700 dark:text-blue-300 font-semibold">
-                  {dailyPhrase.translation}
-                </p>
-                <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                  {dailyPhrase.meaning}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Tense Selector */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-12 border border-gray-100 dark:border-gray-700">
           <div className="text-center mb-6">
@@ -173,6 +149,30 @@ export default function Home() {
             />
           </div>
         </div>
+
+        {/* Phrase of the Day */}
+        {dailyPhrase && (
+          <div className="bg-gradient-to-r from-emerald-100 via-white to-blue-100 dark:from-emerald-900/20 dark:via-gray-800 dark:to-blue-900/20 rounded-2xl p-8 mb-12 border border-emerald-200 dark:border-emerald-700 shadow-lg">
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                <span>⭐</span>
+                Phrase of the Day
+                <span>⭐</span>
+              </div>
+              <div className="space-y-3">
+                <p className="text-3xl font-bold text-emerald-800 dark:text-emerald-300 italic">
+                  "{dailyPhrase.phrase}"
+                </p>
+                <p className="text-xl text-blue-700 dark:text-blue-300 font-semibold">
+                  {dailyPhrase.translation}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                  {dailyPhrase.meaning}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Quick Links */}
         <div className="bg-gradient-to-r from-blue-100 via-white to-purple-100 dark:from-blue-900/20 dark:via-gray-800 dark:to-purple-900/20 rounded-2xl p-8 shadow-lg border border-blue-200 dark:border-blue-700">
