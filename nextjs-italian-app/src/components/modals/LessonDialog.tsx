@@ -11,8 +11,16 @@ import {
   getGeneralPassatoProssimoLesson,
   type LessonContent as PassatoLessonContent,
 } from "./content/passato-prossimo/lesson";
+import {
+  getFuturoSempliceLesson,
+  getGeneralFuturoSempliceLesson,
+  type LessonContent as FuturoLessonContent,
+} from "./content/futuro-semplice/lesson";
 
-type LessonContent = PresenteLessonContent | PassatoLessonContent;
+type LessonContent =
+  | PresenteLessonContent
+  | PassatoLessonContent
+  | FuturoLessonContent;
 
 interface LessonDialogProps {
   isOpen: boolean;
@@ -34,6 +42,7 @@ interface LessonDialogProps {
       auxiliaryVerb?: string;
       regularPresenteIndicativo?: boolean;
       regularPassatoProssimo?: boolean;
+      regularFuturoSemplice?: boolean;
     };
   };
 }
@@ -98,6 +107,31 @@ function LessonDialog({
         );
       } else {
         return getGeneralPassatoProssimoLesson();
+      }
+    }
+
+    // Futuro Semplice
+    if (tense === "futuro-semplice" && mood === "indicativo") {
+      if (hasConjugations) {
+        const isIrregular =
+          currentVerb.metadata.regularFuturoSemplice === false;
+        return getFuturoSempliceLesson(
+          {
+            infinitive: currentVerb.infinitive,
+            definition: currentVerb.definition,
+            conjugations: {
+              io: currentVerb.conjugation!.io!,
+              tu: currentVerb.conjugation!.tu!,
+              luiLei: currentVerb.conjugation!.luiLei!,
+              noi: currentVerb.conjugation!.noi!,
+              voi: currentVerb.conjugation!.voi!,
+              loro: currentVerb.conjugation!.loro!,
+            },
+          },
+          isIrregular
+        );
+      } else {
+        return getGeneralFuturoSempliceLesson();
       }
     }
 
