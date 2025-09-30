@@ -24,35 +24,58 @@ function LessonDialog({
   if (!isOpen) return null;
 
   const getLessonContent = () => {
-    const isIrregular =
+    const hasConjugations =
       currentVerb &&
       currentVerb.conjugations &&
       currentVerb.conjugations.presenteIndicativo;
 
     if (tense === "presente" && mood === "indicativo") {
-      if (isIrregular) {
-        // Irregular verb lesson
-        const conjugations = currentVerb!.conjugations!.presenteIndicativo;
+      if (hasConjugations) {
+        // Verb-specific lesson (both regular and irregular)
+        // Handle both data structures:
+        // 1. Regular verbs: conjugations.presenteIndicativo.conjugations.io
+        // 2. Irregular verbs: conjugations.presenteIndicativo.io
+        const presenteIndicativo =
+          currentVerb!.conjugations!.presenteIndicativo;
+        const conjugations =
+          presenteIndicativo.conjugations || presenteIndicativo;
+        const isIrregular = !presenteIndicativo.conjugations; // Irregular if no nested conjugations
         return {
-          title: `Irregular Verb: ${currentVerb!.infinitive} - Complete Guide`,
-          isIrregular: true,
+          title: `${isIrregular ? "Irregular" : "Regular"} Verb: ${
+            currentVerb!.infinitive
+          } - Complete Guide`,
+          isIrregular: isIrregular,
           sections: [
             {
-              title: "⚡ What makes this verb irregular?",
-              content: `The verb "${currentVerb!.infinitive}" (${
-                currentVerb!.definition
-              }) is irregular because it doesn't follow the standard conjugation patterns. Each form must be memorized individually.`,
-              examples: [
-                `Unlike regular verbs, "${
-                  currentVerb!.infinitive
-                }" has unique forms that don't follow predictable patterns.`,
-                "Irregular verbs are often the most commonly used verbs in Italian!",
-              ],
+              title: isIrregular
+                ? "⚡ What makes this verb irregular?"
+                : "📖 About this verb",
+              content: isIrregular
+                ? `The verb "${currentVerb!.infinitive}" (${
+                    currentVerb!.definition
+                  }) is irregular because it doesn't follow the standard conjugation patterns. Each form must be memorized individually.`
+                : `The verb "${currentVerb!.infinitive}" (${
+                    currentVerb!.definition
+                  }) is a regular verb that follows predictable conjugation patterns. Learn the pattern once and apply it to all similar verbs!`,
+              examples: isIrregular
+                ? [
+                    `Unlike regular verbs, "${
+                      currentVerb!.infinitive
+                    }" has unique forms that don't follow predictable patterns.`,
+                    "Irregular verbs are often the most commonly used verbs in Italian!",
+                  ]
+                : [
+                    `This verb follows the standard -${currentVerb!.infinitive
+                      .slice(-3)
+                      .toUpperCase()} conjugation pattern.`,
+                    "Once you learn this pattern, you can conjugate hundreds of similar verbs!",
+                  ],
             },
             {
               title: `Complete Conjugation of "${currentVerb!.infinitive}"`,
-              content:
-                "Here are all the present indicative forms you need to memorize:",
+              content: isIrregular
+                ? "Here are all the present indicative forms you need to memorize:"
+                : "Here are all the present indicative forms following the regular pattern:",
               examples: [
                 `io ${conjugations.io}`,
                 `tu ${conjugations.tu}`,
@@ -63,14 +86,28 @@ function LessonDialog({
               ],
             },
             {
-              title: "💡 Memory Tips for Irregular Verbs",
-              content: "Strategies to help you remember these unique forms:",
-              examples: [
-                "Practice daily with flashcards",
-                "Use the verb in sentences to build context",
-                "Group similar irregular verbs together",
-                "Focus on the most common forms first (io, tu, lui/lei)",
-              ],
+              title: isIrregular
+                ? "💡 Memory Tips for Irregular Verbs"
+                : "💡 Learning Tips",
+              content: isIrregular
+                ? "Strategies to help you remember these unique forms:"
+                : "Strategies to master this verb and the pattern:",
+              examples: isIrregular
+                ? [
+                    "Practice daily with flashcards",
+                    "Use the verb in sentences to build context",
+                    "Group similar irregular verbs together",
+                    "Focus on the most common forms first (io, tu, lui/lei)",
+                  ]
+                : [
+                    "Identify the stem by removing the -" +
+                      currentVerb!.infinitive.slice(-3),
+                    "Add the appropriate ending for each pronoun",
+                    "Practice with other -" +
+                      currentVerb!.infinitive.slice(-3).toUpperCase() +
+                      " verbs to reinforce the pattern",
+                    "Use the verb in everyday sentences",
+                  ],
             },
             {
               title: "Usage Examples",

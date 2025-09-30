@@ -32,13 +32,18 @@ function VerbTreeGraphDialog({
       currentVerb.conjugations &&
       currentVerb.conjugations.presenteIndicativo
     ) {
-      // Use actual irregular conjugations from database
-      const conjugations = currentVerb.conjugations.presenteIndicativo;
+      // Handle both data structures:
+      // 1. Regular verbs: conjugations.presenteIndicativo.conjugations.io
+      // 2. Irregular verbs: conjugations.presenteIndicativo.io
+      const presenteIndicativo = currentVerb.conjugations.presenteIndicativo;
+      const conjugations =
+        presenteIndicativo.conjugations || presenteIndicativo;
+
       return {
         infinitive: currentVerb.infinitive,
         definition: currentVerb.definition,
         stem: currentVerb.infinitive.slice(0, -3),
-        isIrregular: true,
+        isIrregular: !presenteIndicativo.conjugations, // Irregular if no nested conjugations
         examples: [
           `${conjugations.io} (Io)`,
           `${conjugations.tu} (Tu)`,
