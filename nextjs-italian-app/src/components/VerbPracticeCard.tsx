@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import HintDialog from "./modals/HintDialog";
 import VerbTreeGraphDialog from "./modals/VerbTreeGraphDialog";
 import LessonDialog from "./modals/LessonDialog";
+import PracticeStatsDialog from "./modals/PracticeStatsDialog";
+import AudioPronunciationDialog from "./modals/AudioPronunciationDialog";
 import { useVerbData } from "../hooks/useVerbData";
 
 interface VerbPracticeCardProps {
@@ -49,9 +50,10 @@ function VerbPracticeCard({
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(
     null
   );
-  const [isHintDialogOpen, setIsHintDialogOpen] = useState(false);
   const [isVerbTreeOpen, setIsVerbTreeOpen] = useState(false);
   const [isLessonOpen, setIsLessonOpen] = useState(false);
+  const [isPracticeStatsOpen, setIsPracticeStatsOpen] = useState(false);
+  const [isAudioOpen, setIsAudioOpen] = useState(false);
 
   const { fetchRandomPronoun, fetchRandomVerb, isLoading } = useVerbData();
 
@@ -95,11 +97,13 @@ function VerbPracticeCard({
 
   const conjugateVerb = (pronoun: string, verb: string) => {
     const stem = verb.slice(0, -3);
-    const pronounKey = pronoun.toLowerCase() === "lui/lei" ? "luiLei" : pronoun.toLowerCase();
+    const pronounKey =
+      pronoun.toLowerCase() === "lui/lei" ? "luiLei" : pronoun.toLowerCase();
 
     // Handle Passato Prossimo from database
     if (tense === "passato-prossimo" && mood === "indicativo") {
-      const conjugations = currentVerb.conjugations?.passatoProssimo?.conjugations;
+      const conjugations =
+        currentVerb.conjugations?.passatoProssimo?.conjugations;
       if (conjugations) {
         return conjugations[pronounKey] || `${stem}[passato-prossimo]`;
       }
@@ -107,7 +111,8 @@ function VerbPracticeCard({
 
     // Handle Presente Indicativo from database
     if (tense === "presente" && mood === "indicativo") {
-      const conjugations = currentVerb.conjugations?.presenteIndicativo?.conjugations;
+      const conjugations =
+        currentVerb.conjugations?.presenteIndicativo?.conjugations;
       if (conjugations) {
         return conjugations[pronounKey] || `${stem}[presente]`;
       }
@@ -154,65 +159,13 @@ function VerbPracticeCard({
     }
   };
 
-  const getHintText = () => {
-    if (tense === "passato-prossimo" && mood === "indicativo") {
-      const pastParticiple =
-        currentVerb.conjugations?.passatoProssimo?.pastParticiple?.base;
-      const auxiliary = currentVerb.auxiliary_verb || "avere";
-
-      const auxiliaryConjugations =
-        auxiliary === "essere"
-          ? ["sono", "sei", "è", "siamo", "siete", "sono"]
-          : ["ho", "hai", "ha", "abbiamo", "avete", "hanno"];
-
-      return {
-        type: `This is an -${verbType.toUpperCase()} verb (${
-          currentVerb.definition
-        })`,
-        tense: `Passato Prossimo uses ${auxiliary} + ${pastParticiple}`,
-        endings: auxiliaryConjugations.map(
-          (aux) =>
-            `${aux} ${pastParticiple}${auxiliary === "essere" ? "/a/i/e" : ""}`
-        ),
-      };
-    }
-
-    const endings = {
-      are: ["-o", "-i", "-a", "-iamo", "-ate", "-ano"],
-      ere: ["-o", "-i", "-e", "-iamo", "-ete", "-ono"],
-      ire: ["-o", "-i", "-e", "-iamo", "-ite", "-ono"],
-    };
-
-    return {
-      type: `This is an -${verbType.toUpperCase()} verb (${
-        currentVerb.definition
-      })`,
-      endings: endings[verbType],
-    };
-  };
-
-  const hint = getHintText();
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 max-w-sm mx-auto">
-      {/* Header with Title and Hint Button */}
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+      {/* Header with Title */}
+      <div className="mb-6">
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white text-center">
           {title}
         </h3>
-        <button
-          onClick={() => setIsHintDialogOpen(true)}
-          className="p-2 text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200"
-          title="Show hint"
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
       </div>
 
       {/* Verb Type Badge */}
@@ -303,30 +256,36 @@ function VerbPracticeCard({
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
             Study Tools:
           </p>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => setIsVerbTreeOpen(true)}
               className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
             >
-              🌳 View Conjugation Tree
+              🌳 Conjugation Tree
             </button>
             <button
               onClick={() => setIsLessonOpen(true)}
               className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white text-sm rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
             >
-              📚 Study Grammar Lesson
+              📚 Grammar Lesson
+            </button>
+            <button
+              onClick={() => setIsPracticeStatsOpen(true)}
+              className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-sm rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
+            >
+              📊 Practice Stats
+            </button>
+            <button
+              onClick={() => setIsAudioOpen(true)}
+              className="w-full px-4 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-sm rounded-lg transition-all duration-200 font-medium transform hover:scale-105 shadow-md"
+            >
+              🔊 Audio
             </button>
           </div>
         </div>
       </div>
 
       {/* Modal Components */}
-      <HintDialog
-        isOpen={isHintDialogOpen}
-        onClose={() => setIsHintDialogOpen(false)}
-        hint={hint}
-      />
-
       <VerbTreeGraphDialog
         isOpen={isVerbTreeOpen}
         onClose={() => setIsVerbTreeOpen(false)}
@@ -341,6 +300,18 @@ function VerbPracticeCard({
         onClose={() => setIsLessonOpen(false)}
         tense={tense}
         mood={mood}
+        currentVerb={currentVerb}
+      />
+
+      <PracticeStatsDialog
+        isOpen={isPracticeStatsOpen}
+        onClose={() => setIsPracticeStatsOpen(false)}
+        currentVerb={currentVerb}
+      />
+
+      <AudioPronunciationDialog
+        isOpen={isAudioOpen}
+        onClose={() => setIsAudioOpen(false)}
         currentVerb={currentVerb}
       />
     </div>
