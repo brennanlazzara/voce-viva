@@ -4,19 +4,26 @@ interface VerbData {
   infinitive: string;
   type: "are" | "ere" | "ire";
   definition: string;
-  regularPresenteIndicativo?: boolean;
-  auxiliaryVerb?: string;
-  auxiliary_verb?: string;
-  conjugations?: {
-    [tense: string]: {
-      [pronoun: string]: string;
-    };
+  conjugation: {
+    io: string | null;
+    tu: string | null;
+    luiLei: string | null;
+    noi: string | null;
+    voi: string | null;
+    loro: string | null;
+  } | null;
+  metadata: {
+    auxiliaryVerb?: string;
+    regularPresenteIndicativo?: boolean;
+    regularPassatoProssimo?: boolean;
   };
 }
 
 interface FilterOptions {
   regularOnly?: boolean | null;
   type?: "are" | "ere" | "ire" | null;
+  tense?: string;
+  mood?: string;
 }
 
 export const useVerbData = () => {
@@ -61,147 +68,99 @@ export const useVerbData = () => {
   const fetchRandomVerb = useCallback(
     async (filterOptions: FilterOptions = {}): Promise<VerbData> => {
       setIsLoading(true);
-      const { regularOnly = null, type = null } = filterOptions;
+      const {
+        regularOnly = null,
+        type = null,
+        tense = "presente",
+        mood = "indicativo",
+      } = filterOptions;
       try {
-        let isValidVerb = false;
-        let data = null;
-        let attempts = 0;
-        const maxAttempts = 20; // Prevent infinite loops
+        // Use type-specific endpoint if type is specified
+        const endpoint = type
+          ? `/api/verbs/random/${type}`
+          : "/api/verbs/random";
 
-        while (!isValidVerb && attempts < maxAttempts) {
-          // Use type-specific endpoint if type is specified
-          const endpoint = type
-            ? `/api/verbs/random/${type}`
-            : "/api/verbs/random";
-          const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            credentials: "include", // Include cookies for auth
-          });
+        // Add query parameters
+        const params = new URLSearchParams();
+        if (tense) params.append("tense", tense);
+        if (mood) params.append("mood", mood);
+        if (regularOnly !== null)
+          params.append("regularOnly", String(regularOnly));
 
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
+        const url = `${API_BASE_URL}${endpoint}?${params.toString()}`;
+        const response = await fetch(url, {
+          credentials: "include", // Include cookies for auth
+        });
 
-          data = await response.json();
-
-          // Check filtering criteria
-          if (regularOnly !== null) {
-            if (regularOnly && data.regularPresenteIndicativo === true) {
-              isValidVerb = true;
-            } else if (
-              !regularOnly &&
-              data.regularPresenteIndicativo === false
-            ) {
-              isValidVerb = true;
-            }
-          } else {
-            // No filtering, accept any verb
-            isValidVerb = true;
-          }
-
-          attempts++;
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
 
-        if (!isValidVerb) {
-          throw new Error(
-            "Could not find a verb matching the criteria after multiple attempts"
-          );
-        }
+        const data = await response.json();
 
         return {
           infinitive: data.infinitive,
           type: data.type,
           definition: data.definition,
-          regularPresenteIndicativo: data.regularPresenteIndicativo,
-          auxiliaryVerb: data.auxiliaryVerb,
-          auxiliary_verb: data.auxiliary_verb,
-          conjugations: data.conjugations,
+          conjugation: data.conjugation,
+          metadata: data.metadata || {},
         };
       } catch (error) {
         console.error("Error fetching random verb:", error);
 
         // Fallback to static verbs if API fails
-        const fallbackVerbs = {
-          are: [
-            {
-              infinitive: "parlare",
-              definition: "to speak",
-              type: "are" as const,
+        const fallbackVerbs: VerbData[] = [
+          {
+            infinitive: "parlare",
+            definition: "to speak",
+            type: "are",
+            conjugation: {
+              io: "parlo",
+              tu: "parli",
+              luiLei: "parla",
+              noi: "parliamo",
+              voi: "parlate",
+              loro: "parlano",
+            },
+            metadata: {
               regularPresenteIndicativo: true,
             },
-            {
-              infinitive: "cantare",
-              definition: "to sing",
-              type: "are" as const,
+          },
+          {
+            infinitive: "vendere",
+            definition: "to sell",
+            type: "ere",
+            conjugation: {
+              io: "vendo",
+              tu: "vendi",
+              luiLei: "vende",
+              noi: "vendiamo",
+              voi: "vendete",
+              loro: "vendono",
+            },
+            metadata: {
               regularPresenteIndicativo: true,
             },
-            {
-              infinitive: "giocare",
-              definition: "to play",
-              type: "are" as const,
+          },
+          {
+            infinitive: "dormire",
+            definition: "to sleep",
+            type: "ire",
+            conjugation: {
+              io: "dormo",
+              tu: "dormi",
+              luiLei: "dorme",
+              noi: "dormiamo",
+              voi: "dormite",
+              loro: "dormono",
+            },
+            metadata: {
               regularPresenteIndicativo: true,
             },
-          ],
-          ere: [
-            {
-              infinitive: "vendere",
-              definition: "to sell",
-              type: "ere" as const,
-              regularPresenteIndicativo: true,
-            },
-            {
-              infinitive: "credere",
-              definition: "to believe",
-              type: "ere" as const,
-              regularPresenteIndicativo: true,
-            },
-            {
-              infinitive: "scrivere",
-              definition: "to write",
-              type: "ere" as const,
-              regularPresenteIndicativo: true,
-            },
-          ],
-          ire: [
-            {
-              infinitive: "dormire",
-              definition: "to sleep",
-              type: "ire" as const,
-              regularPresenteIndicativo: true,
-            },
-            {
-              infinitive: "partire",
-              definition: "to leave",
-              type: "ire" as const,
-              regularPresenteIndicativo: true,
-            },
-            {
-              infinitive: "aprire",
-              definition: "to open",
-              type: "ire" as const,
-              regularPresenteIndicativo: true,
-            },
-          ],
-        };
-
-        // If regularOnly filter is applied, return appropriate verb
-        if (regularOnly === true) {
-          const allRegularVerbs = [
-            ...fallbackVerbs.are,
-            ...fallbackVerbs.ere,
-            ...fallbackVerbs.ire,
-          ];
-          return allRegularVerbs[
-            Math.floor(Math.random() * allRegularVerbs.length)
-          ];
-        }
-
-        // Otherwise return any verb
-        const allVerbs = [
-          ...fallbackVerbs.are,
-          ...fallbackVerbs.ere,
-          ...fallbackVerbs.ire,
+          },
         ];
-        return allVerbs[Math.floor(Math.random() * allVerbs.length)];
+
+        return fallbackVerbs[Math.floor(Math.random() * fallbackVerbs.length)];
       } finally {
         setIsLoading(false);
       }

@@ -22,11 +22,29 @@ function IrregularVerbPracticeCard({
   mood,
   title,
 }: IrregularVerbPracticeCardProps) {
-  const [currentVerb, setCurrentVerb] = useState({
+  const [currentVerb, setCurrentVerb] = useState<{
+    infinitive: string;
+    definition: string;
+    type: "are" | "ere" | "ire";
+    conjugation: {
+      io: string | null;
+      tu: string | null;
+      luiLei: string | null;
+      noi: string | null;
+      voi: string | null;
+      loro: string | null;
+    } | null;
+    metadata: {
+      auxiliaryVerb?: string;
+      regularPresenteIndicativo?: boolean;
+      regularPassatoProssimo?: boolean;
+    };
+  }>({
     infinitive: "",
     definition: "",
     type: verbType,
-    conjugations: null as Record<string, any> | null,
+    conjugation: null,
+    metadata: {},
   });
   const [currentPronoun, setCurrentPronoun] = useState(PRONOUNS[0]);
   const [userAnswer, setUserAnswer] = useState("");
@@ -50,82 +68,31 @@ function IrregularVerbPracticeCard({
       // Fetch pronoun and irregular verb data from API
       const [pronounData, verbData] = await Promise.all([
         fetchRandomPronoun(),
-        fetchRandomVerb({ regularOnly: false, type: verbType }), // Filter for irregular verbs AND specific verb type
+        fetchRandomVerb({
+          regularOnly: false,
+          type: verbType,
+          tense: tense,
+          mood: mood,
+        }),
       ]);
 
       setCurrentPronoun(pronounData);
-      setCurrentVerb({
-        infinitive: verbData.infinitive,
-        definition: verbData.definition,
-        type: verbData.type,
-        conjugations: verbData.conjugations ?? null,
-      });
+      setCurrentVerb(verbData);
       setUserAnswer("");
       setIsFlipped(false);
       setFeedback(null);
     } catch (error) {
       console.error("Error loading new card:", error);
       // Fallback to irregular verb examples if API fails
-      const fallbackIrregularVerbs = {
-        are: [
-          {
-            infinitive: "andare",
-            definition: "to go",
-            type: verbType,
-            conjugations: {
-              presenteIndicativo: {
-                io: "vado",
-                tu: "vai",
-                luiLei: "va",
-                noi: "andiamo",
-                voi: "andate",
-                loro: "vanno",
-              },
-            },
-          },
-        ],
-        ere: [
-          {
-            infinitive: "essere",
-            definition: "to be",
-            type: verbType,
-            conjugations: {
-              presenteIndicativo: {
-                io: "sono",
-                tu: "sei",
-                luiLei: "è",
-                noi: "siamo",
-                voi: "siete",
-                loro: "sono",
-              },
-            },
-          },
-        ],
-        ire: [
-          {
-            infinitive: "venire",
-            definition: "to come",
-            type: verbType,
-            conjugations: {
-              presenteIndicativo: {
-                io: "vengo",
-                tu: "vieni",
-                luiLei: "viene",
-                noi: "veniamo",
-                voi: "venite",
-                loro: "vengono",
-              },
-            },
-          },
-        ],
-      };
-
-      const fallbackVerbs =
-        fallbackIrregularVerbs[verbType] || fallbackIrregularVerbs.ere;
-      const fallbackVerb = fallbackVerbs[0];
-
       const fallbackPronoun =
         PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
+      const fallbackVerb = {
+        infinitive: "andare",
+        definition: "to go",
+        type: verbType,
+        conjugation: null,
+        metadata: {},
+      };
 
       setCurrentPronoun(fallbackPronoun);
       setCurrentVerb(fallbackVerb);
@@ -135,47 +102,27 @@ function IrregularVerbPracticeCard({
     }
   };
 
-  const getConjugationFromDatabase = (
-    pronoun: string,
-    conjugations: Record<string, any> | null
-  ) => {
-    if (!conjugations || !conjugations.presenteIndicativo) {
-      return null;
-    }
-
-    // Handle both data structures:
-    // 1. Regular verbs: conjugations.presenteIndicativo.conjugations.io
-    // 2. Irregular verbs: conjugations.presenteIndicativo.io
-    const presenteIndicativo = conjugations.presenteIndicativo;
-    const presentConjugations =
-      presenteIndicativo.conjugations || presenteIndicativo;
-
-    // Map display pronouns to database keys
-    const pronounMap: { [key: string]: string } = {
-      Io: "io",
-      Tu: "tu",
-      "Lui/Lei": "luiLei",
-      Noi: "noi",
-      Voi: "voi",
-      Loro: "loro",
-    };
-
-    const dbKey = pronounMap[pronoun];
-    return dbKey ? presentConjugations[dbKey] : null;
-  };
-
   const checkAnswer = () => {
-    const correctAnswer = getConjugationFromDatabase(
-      currentPronoun,
-      currentVerb.conjugations
-    );
+    // Get pronoun key for conjugation lookup
+    const pronounKey =
+      currentPronoun.toLowerCase() === "lui/lei"
+        ? "luiLei"
+        : currentPronoun.toLowerCase();
+
+    // Get correct answer directly from normalized conjugation data
+    const correctAnswer =
+      currentVerb.conjugation?.[
+        pronounKey as keyof typeof currentVerb.conjugation
+      ];
+
     console.log("Debug - Pronoun:", currentPronoun);
     console.log("Debug - Verb:", currentVerb.infinitive);
     console.log("Debug - Expected answer:", correctAnswer);
     console.log("Debug - User answer:", userAnswer.trim().toLowerCase());
 
     if (!correctAnswer) {
-      console.error("No conjugation found for this verb");
+      console.error("No conjugation found for pronoun:", pronounKey);
+      setFeedback("incorrect");
       return;
     }
 

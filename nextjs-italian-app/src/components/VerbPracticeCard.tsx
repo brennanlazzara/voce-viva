@@ -26,23 +26,25 @@ function VerbPracticeCard({
     infinitive: string;
     definition: string;
     type: "are" | "ere" | "ire";
-    conjugations?: {
-      passatoProssimo?: {
-        conjugations?: { [key: string]: string };
-        pastParticiple?: { base?: string };
-      };
-      presenteIndicativo?: {
-        conjugations?: { [key: string]: string };
-      };
-      // Add other tenses/moods as needed
+    conjugation: {
+      io: string | null;
+      tu: string | null;
+      luiLei: string | null;
+      noi: string | null;
+      voi: string | null;
+      loro: string | null;
+    } | null;
+    metadata: {
+      auxiliaryVerb?: string;
+      regularPresenteIndicativo?: boolean;
+      regularPassatoProssimo?: boolean;
     };
-    auxiliary_verb?: string;
   }>({
     infinitive: "",
     definition: "",
     type: verbType,
-    conjugations: undefined,
-    auxiliary_verb: undefined,
+    conjugation: null,
+    metadata: {},
   });
   const [currentPronoun, setCurrentPronoun] = useState(PRONOUNS[0]);
   const [userAnswer, setUserAnswer] = useState("");
@@ -66,7 +68,12 @@ function VerbPracticeCard({
       // Fetch pronoun and verb data from API
       const [pronounData, verbData] = await Promise.all([
         fetchRandomPronoun(),
-        fetchRandomVerb({ regularOnly: true, type: verbType }), // Filter for regular verbs AND specific verb type
+        fetchRandomVerb({
+          regularOnly: true,
+          type: verbType,
+          tense: tense,
+          mood: mood,
+        }),
       ]);
 
       setCurrentPronoun(pronounData);
@@ -83,8 +90,8 @@ function VerbPracticeCard({
         infinitive: "parlare",
         definition: "to speak",
         type: verbType,
-        conjugations: undefined,
-        auxiliary_verb: undefined,
+        conjugation: null,
+        metadata: {},
       };
 
       setCurrentPronoun(fallbackPronoun);
@@ -95,39 +102,30 @@ function VerbPracticeCard({
     }
   };
 
-  const conjugateVerb = (pronoun: string, verb: string) => {
-    const stem = verb.slice(0, -3);
-    const pronounKey =
-      pronoun.toLowerCase() === "lui/lei" ? "luiLei" : pronoun.toLowerCase();
-
-    // Handle Passato Prossimo from database
-    if (tense === "passato-prossimo" && mood === "indicativo") {
-      const conjugations =
-        currentVerb.conjugations?.passatoProssimo?.conjugations;
-      if (conjugations) {
-        return conjugations[pronounKey] || `${stem}[passato-prossimo]`;
-      }
-    }
-
-    // Handle Presente Indicativo from database
-    if (tense === "presente" && mood === "indicativo") {
-      const conjugations =
-        currentVerb.conjugations?.presenteIndicativo?.conjugations;
-      if (conjugations) {
-        return conjugations[pronounKey] || `${stem}[presente]`;
-      }
-    }
-
-    // For other tenses, return a placeholder (to be implemented)
-    return `${stem}[${tense}]`;
-  };
-
   const checkAnswer = () => {
-    const correctAnswer = conjugateVerb(currentPronoun, currentVerb.infinitive);
+    // Get pronoun key for conjugation lookup
+    const pronounKey =
+      currentPronoun.toLowerCase() === "lui/lei"
+        ? "luiLei"
+        : currentPronoun.toLowerCase();
+
+    // Get correct answer directly from normalized conjugation data
+    const correctAnswer =
+      currentVerb.conjugation?.[
+        pronounKey as keyof typeof currentVerb.conjugation
+      ];
+
     console.log("Debug - Pronoun:", currentPronoun);
     console.log("Debug - Verb:", currentVerb.infinitive);
     console.log("Debug - Expected answer:", correctAnswer);
     console.log("Debug - User answer:", userAnswer.trim().toLowerCase());
+
+    if (!correctAnswer) {
+      console.error("No conjugation found for pronoun:", pronounKey);
+      setFeedback("incorrect");
+      return;
+    }
+
     const isCorrect =
       userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase();
 
