@@ -1,6 +1,12 @@
 "use client";
 
 import React from "react";
+import {
+  getPresenteIndicativoTree,
+  getDefaultPresenteIndicativoTree,
+  getVerbTreeLearningTips,
+  type VerbTreeData,
+} from "./content/presente-indicativo/tree";
 
 interface VerbTreeGraphDialogProps {
   isOpen: boolean;
@@ -26,7 +32,7 @@ function VerbTreeGraphDialog({
   if (!isOpen) return null;
 
   // Get verb tree data - use current verb if available, otherwise fallback to regular patterns
-  const getVerbTreeData = () => {
+  const getVerbTreeData = (): VerbTreeData => {
     if (
       currentVerb &&
       currentVerb.conjugations &&
@@ -38,52 +44,37 @@ function VerbTreeGraphDialog({
       const presenteIndicativo = currentVerb.conjugations.presenteIndicativo;
       const conjugations =
         presenteIndicativo.conjugations || presenteIndicativo;
+      const isIrregular = !presenteIndicativo.conjugations;
 
-      return {
-        infinitive: currentVerb.infinitive,
-        definition: currentVerb.definition,
-        stem: currentVerb.infinitive.slice(0, -3),
-        isIrregular: !presenteIndicativo.conjugations, // Irregular if no nested conjugations
-        examples: [
-          `${conjugations.io} (Io)`,
-          `${conjugations.tu} (Tu)`,
-          `${conjugations.luiLei} (Lui/Lei)`,
-          `${conjugations.noi} (Noi)`,
-          `${conjugations.voi} (Voi)`,
-          `${conjugations.loro} (Loro)`,
-        ],
-      };
+      return getPresenteIndicativoTree(
+        currentVerb.infinitive,
+        currentVerb.definition,
+        {
+          io: conjugations.io,
+          tu: conjugations.tu,
+          luiLei: conjugations.luiLei,
+          noi: conjugations.noi,
+          voi: conjugations.voi,
+          loro: conjugations.loro,
+        },
+        isIrregular
+      );
     } else {
       // Fallback to regular verb patterns
-      const baseVerb =
-        currentVerb?.infinitive ||
-        (verbType === "are"
-          ? "parlare"
-          : verbType === "ere"
-          ? "vendere"
-          : "dormire");
-      const stem = baseVerb.slice(0, -3);
-
-      return {
-        infinitive: baseVerb,
-        definition: currentVerb?.definition || "example verb",
-        stem: stem,
-        isIrregular: false,
-        examples: [
-          `${stem}o (Io)`,
-          `${stem}i (Tu)`,
-          `${stem}${verbType === "are" ? "a" : "e"} (Lui/Lei)`,
-          `${stem}iamo (Noi)`,
-          `${stem}${
-            verbType === "are" ? "ate" : verbType === "ere" ? "ete" : "ite"
-          } (Voi)`,
-          `${stem}${verbType === "are" ? "ano" : "ono"} (Loro)`,
-        ],
-      };
+      return getDefaultPresenteIndicativoTree(
+        verbType as "are" | "ere" | "ire",
+        currentVerb?.infinitive,
+        currentVerb?.definition
+      );
     }
   };
 
   const verbData = getVerbTreeData();
+  const learningTips = getVerbTreeLearningTips(
+    verbData.isIrregular,
+    verbData.stem,
+    verbType
+  );
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -208,41 +199,9 @@ function VerbTreeGraphDialog({
                   verbData.isIrregular ? "text-red-700" : "text-yellow-700"
                 }`}
               >
-                {verbData.isIrregular ? (
-                  <>
-                    <li>
-                      • <strong>IRREGULAR VERB:</strong> Each form must be
-                      memorized individually
-                    </li>
-                    <li>
-                      • The stem <strong>{verbData.stem}</strong> doesn't follow
-                      regular patterns
-                    </li>
-                    <li>
-                      • Focus on memorizing each conjugation:{" "}
-                      {verbData.examples.join(", ")}
-                    </li>
-                    <li>
-                      • Practice frequently - irregular verbs are often the most
-                      common ones
-                    </li>
-                    <li>
-                      • Group similar irregular verbs together for easier
-                      learning
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    <li>
-                      • Focus on the stem: <strong>{verbData.stem}</strong>
-                    </li>
-                    <li>• Add the appropriate ending for each pronoun</li>
-                    <li>
-                      • Notice the pattern for -{verbType.toUpperCase()} verbs
-                    </li>
-                    <li>• Practice with different verbs of the same type</li>
-                  </>
-                )}
+                {learningTips.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
               </ul>
             </div>
           </div>

@@ -1,6 +1,11 @@
 "use client";
 
 import React from "react";
+import {
+  getPresenteIndicativoLesson,
+  getGeneralPresenteIndicativoLesson,
+  type LessonContent,
+} from "./content/presente-indicativo/lesson";
 
 interface LessonDialogProps {
   isOpen: boolean;
@@ -23,7 +28,7 @@ function LessonDialog({
 }: LessonDialogProps) {
   if (!isOpen) return null;
 
-  const getLessonContent = () => {
+  const getLessonContent = (): LessonContent => {
     const hasConjugations =
       currentVerb &&
       currentVerb.conjugations &&
@@ -39,136 +44,26 @@ function LessonDialog({
           currentVerb!.conjugations!.presenteIndicativo;
         const conjugations =
           presenteIndicativo.conjugations || presenteIndicativo;
-        const isIrregular = !presenteIndicativo.conjugations; // Irregular if no nested conjugations
-        return {
-          title: `${isIrregular ? "Irregular" : "Regular"} Verb: ${
-            currentVerb!.infinitive
-          } - Complete Guide`,
-          isIrregular: isIrregular,
-          sections: [
-            {
-              title: isIrregular
-                ? "⚡ What makes this verb irregular?"
-                : "📖 About this verb",
-              content: isIrregular
-                ? `The verb "${currentVerb!.infinitive}" (${
-                    currentVerb!.definition
-                  }) is irregular because it doesn't follow the standard conjugation patterns. Each form must be memorized individually.`
-                : `The verb "${currentVerb!.infinitive}" (${
-                    currentVerb!.definition
-                  }) is a regular verb that follows predictable conjugation patterns. Learn the pattern once and apply it to all similar verbs!`,
-              examples: isIrregular
-                ? [
-                    `Unlike regular verbs, "${
-                      currentVerb!.infinitive
-                    }" has unique forms that don't follow predictable patterns.`,
-                    "Irregular verbs are often the most commonly used verbs in Italian!",
-                  ]
-                : [
-                    `This verb follows the standard -${currentVerb!.infinitive
-                      .slice(-3)
-                      .toUpperCase()} conjugation pattern.`,
-                    "Once you learn this pattern, you can conjugate hundreds of similar verbs!",
-                  ],
+        const isIrregular = !presenteIndicativo.conjugations;
+
+        return getPresenteIndicativoLesson(
+          {
+            infinitive: currentVerb!.infinitive,
+            definition: currentVerb!.definition,
+            conjugations: {
+              io: conjugations.io,
+              tu: conjugations.tu,
+              luiLei: conjugations.luiLei,
+              noi: conjugations.noi,
+              voi: conjugations.voi,
+              loro: conjugations.loro,
             },
-            {
-              title: `Complete Conjugation of "${currentVerb!.infinitive}"`,
-              content: isIrregular
-                ? "Here are all the present indicative forms you need to memorize:"
-                : "Here are all the present indicative forms following the regular pattern:",
-              examples: [
-                `io ${conjugations.io}`,
-                `tu ${conjugations.tu}`,
-                `lui/lei ${conjugations.luiLei}`,
-                `noi ${conjugations.noi}`,
-                `voi ${conjugations.voi}`,
-                `loro ${conjugations.loro}`,
-              ],
-            },
-            {
-              title: isIrregular
-                ? "💡 Memory Tips for Irregular Verbs"
-                : "💡 Learning Tips",
-              content: isIrregular
-                ? "Strategies to help you remember these unique forms:"
-                : "Strategies to master this verb and the pattern:",
-              examples: isIrregular
-                ? [
-                    "Practice daily with flashcards",
-                    "Use the verb in sentences to build context",
-                    "Group similar irregular verbs together",
-                    "Focus on the most common forms first (io, tu, lui/lei)",
-                  ]
-                : [
-                    "Identify the stem by removing the -" +
-                      currentVerb!.infinitive.slice(-3),
-                    "Add the appropriate ending for each pronoun",
-                    "Practice with other -" +
-                      currentVerb!.infinitive.slice(-3).toUpperCase() +
-                      " verbs to reinforce the pattern",
-                    "Use the verb in everyday sentences",
-                  ],
-            },
-            {
-              title: "Usage Examples",
-              content: `Common ways to use "${
-                currentVerb!.infinitive
-              }" in everyday Italian:`,
-              examples: [
-                `Io ${conjugations.io} - Example: "Io ${
-                  conjugations.io
-                } molto bene" (I ${currentVerb!.definition.replace(
-                  "to ",
-                  ""
-                )} very well)`,
-                `Tu ${conjugations.tu} - Example: "Tu ${
-                  conjugations.tu
-                }..." (You ${currentVerb!.definition.replace("to ", "")}...)`,
-                `Noi ${conjugations.noi} - Example: "Noi ${
-                  conjugations.noi
-                }..." (We ${currentVerb!.definition.replace("to ", "")}...)`,
-              ],
-            },
-          ],
-        };
+          },
+          isIrregular
+        );
       } else {
-        // Regular verb lesson
-        return {
-          title: "Presente Indicativo - Complete Guide",
-          isIrregular: false,
-          sections: [
-            {
-              title: "What is the Presente Indicativo?",
-              content:
-                "The Presente Indicativo (Present Indicative) is used to express actions happening now, habitual actions, or general truths.",
-              examples: [
-                "Io parlo italiano (I speak Italian)",
-                "Lei studia ogni giorno (She studies every day)",
-              ],
-            },
-            {
-              title: "-ARE Verbs (First Conjugation)",
-              content: "Remove -are and add: -o, -i, -a, -iamo, -ate, -ano",
-              examples: [
-                "parlare → io parlo, tu parli, lui parla, noi parliamo, voi parlate, loro parlano",
-              ],
-            },
-            {
-              title: "-ERE Verbs (Second Conjugation)",
-              content: "Remove -ere and add: -o, -i, -e, -iamo, -ete, -ono",
-              examples: [
-                "vendere → io vendo, tu vendi, lui vende, noi vendiamo, voi vendete, loro vendono",
-              ],
-            },
-            {
-              title: "-IRE Verbs (Third Conjugation)",
-              content: "Remove -ire and add: -o, -i, -e, -iamo, -ite, -ono",
-              examples: [
-                "dormire → io dormo, tu dormi, lui dorme, noi dormiamo, voi dormite, loro dormono",
-              ],
-            },
-          ],
-        };
+        // General lesson
+        return getGeneralPresenteIndicativoLesson();
       }
     }
 
