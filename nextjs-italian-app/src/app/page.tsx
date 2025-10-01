@@ -50,7 +50,7 @@ export default function Home() {
         </div>
 
         {/* Tense Selector */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-12 border border-gray-100 dark:border-gray-700">
+        <div className="bg-gradient-to-r from-emerald-100 via-white to-blue-100 dark:from-emerald-900/20 dark:via-gray-800 dark:to-blue-900/20 rounded-2xl shadow-xl p-8 mb-12 border border-emerald-200 dark:border-emerald-700">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
               🎯 Choose Your Practice Mode

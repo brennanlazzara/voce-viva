@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 function ColorModeSwitcher() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // Default to dark mode
   const [mounted, setMounted] = useState(false);
 
-  // Check for saved theme preference or default to light mode
+  // Check for saved theme preference or default to dark mode
   useEffect(() => {
     setMounted(true);
 
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem("theme");
 
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    } else {
+    // Default to dark mode if no saved preference
+    if (savedTheme === "light") {
       setIsDark(false);
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
+    } else {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
     }
   }, []);
 
@@ -27,19 +27,19 @@ function ColorModeSwitcher() {
     setIsDark(newTheme);
 
     if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
   // Don't render until mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <div className="p-2 w-9 h-9 rounded-md border border-gray-300 bg-white">
-        <div className="w-5 h-5 bg-gray-300 rounded animate-pulse"></div>
+      <div className="p-2 w-9 h-9 rounded-md border border-gray-600 bg-gray-800">
+        <div className="w-5 h-5 bg-gray-600 rounded animate-pulse"></div>
       </div>
     );
   }
@@ -48,8 +48,8 @@ function ColorModeSwitcher() {
     <button
       onClick={toggleColorMode}
       className="p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-      title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      title={`Switch to ${isDark ? "light" : "dark"} mode`}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
       {isDark ? (
         // Sun icon for light mode

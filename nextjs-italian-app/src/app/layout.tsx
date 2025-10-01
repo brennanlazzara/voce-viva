@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 font-sans">
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-gray-50 dark:bg-gray-900 font-sans">
         <SessionProvider>
           <Header />
           <main>{children}</main>
