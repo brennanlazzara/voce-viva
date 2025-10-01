@@ -16,6 +16,8 @@ export async function GET(
       SELECT id, infinitive, type, definition, auxiliary_verb,
              regular_presente_indicativo as "regularPresenteIndicativo",
              regular_passato_prossimo as "regularPassatoProssimo",
+             regular_futuro_semplice as "regularFuturoSemplice",
+             regular_imperfetto as "regularImperfetto",
              conjugations
       FROM verbs
       WHERE type = $1

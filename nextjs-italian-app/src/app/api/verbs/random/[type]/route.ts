@@ -14,6 +14,7 @@ function normalizeConjugations(conjugations: any, tense: string, mood: string) {
     "presente-indicativo": "presenteIndicativo",
     "passato-prossimo-indicativo": "passatoProssimo",
     "futuro-semplice-indicativo": "futuroSemplice",
+    "imperfetto-indicativo": "imperfetto",
   };
 
   const dbKey = tenseMap[`${tense}-${mood}`];
@@ -62,6 +63,8 @@ export async function GET(
       SELECT id, infinitive, type, definition, auxiliary_verb,
              regular_presente_indicativo as "regularPresenteIndicativo",
              regular_passato_prossimo as "regularPassatoProssimo",
+             regular_futuro_semplice as "regularFuturoSemplice",
+             regular_imperfetto as "regularImperfetto",
              conjugations
       FROM verbs
       ${whereClause}
@@ -91,6 +94,8 @@ export async function GET(
         auxiliaryVerb: verb.auxiliary_verb,
         regularPresenteIndicativo: verb.regularPresenteIndicativo,
         regularPassatoProssimo: verb.regularPassatoProssimo,
+        regularFuturoSemplice: verb.regularFuturoSemplice,
+        regularImperfetto: verb.regularImperfetto,
       },
     };
 

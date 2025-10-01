@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { query } from '../../../../lib/postgresql';
+import { NextResponse } from "next/server";
+import { query } from "../../../../lib/postgresql";
 
 export async function GET() {
   try {
@@ -8,6 +8,8 @@ export async function GET() {
       SELECT id, infinitive, type, definition, auxiliary_verb,
              regular_presente_indicativo as "regularPresenteIndicativo",
              regular_passato_prossimo as "regularPassatoProssimo",
+             regular_futuro_semplice as "regularFuturoSemplice",
+             regular_imperfetto as "regularImperfetto",
              conjugations
       FROM verbs
       ORDER BY RANDOM()
@@ -15,17 +17,14 @@ export async function GET() {
     `);
 
     if (result.rows.length === 0) {
-      return NextResponse.json(
-        { message: 'No verbs found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "No verbs found" }, { status: 404 });
     }
 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
-    console.error('Database error:', error);
+    console.error("Database error:", error);
     return NextResponse.json(
-      { message: 'Database error occurred' },
+      { message: "Database error occurred" },
       { status: 500 }
     );
   }
