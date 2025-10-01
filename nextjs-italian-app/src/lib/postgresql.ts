@@ -31,6 +31,8 @@ export interface Verb {
   auxiliary_verb: 'avere' | 'essere';
   regular_presente_indicativo: boolean;
   regular_passato_prossimo: boolean;
+  regular_futuro_semplice: boolean;
+  regular_imperfetto: boolean;
   conjugations?: any;
   created_at?: Date;
 }
