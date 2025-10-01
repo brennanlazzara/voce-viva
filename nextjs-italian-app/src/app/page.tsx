@@ -70,8 +70,12 @@ export default function Home() {
                 className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg bg-gray-50 dark:bg-gray-700 dark:text-white hover:bg-white dark:hover:bg-gray-600"
               >
                 <option value="indicativo">Indicativo (Indicative)</option>
-                <option value="congiuntivo">Congiuntivo (Subjunctive)</option>
-                <option value="condizionale">Condizionale (Conditional)</option>
+                <option value="congiuntivo" disabled>
+                  Congiuntivo (Subjunctive) - Coming Soon
+                </option>
+                <option value="condizionale" disabled>
+                  Condizionale (Conditional) - Coming Soon
+                </option>
               </select>
             </div>
             <div>
