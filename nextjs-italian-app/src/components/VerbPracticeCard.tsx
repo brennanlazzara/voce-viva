@@ -38,6 +38,8 @@ function VerbPracticeCard({
       auxiliaryVerb?: string;
       regularPresenteIndicativo?: boolean;
       regularPassatoProssimo?: boolean;
+      regularFuturoSemplice?: boolean;
+      regularImperfetto?: boolean;
     };
   }>({
     infinitive: "",
