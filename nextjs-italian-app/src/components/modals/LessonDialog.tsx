@@ -16,11 +16,17 @@ import {
   getGeneralFuturoSempliceLesson,
   type LessonContent as FuturoLessonContent,
 } from "./content/futuro-semplice/lesson";
+import {
+  getImperfettoLesson,
+  getGeneralImperfettoLesson,
+  type LessonContent as ImperfettoLessonContent,
+} from "./content/imperfetto/lesson";
 
 type LessonContent =
   | PresenteLessonContent
   | PassatoLessonContent
-  | FuturoLessonContent;
+  | FuturoLessonContent
+  | ImperfettoLessonContent;
 
 interface LessonDialogProps {
   isOpen: boolean;
@@ -43,6 +49,7 @@ interface LessonDialogProps {
       regularPresenteIndicativo?: boolean;
       regularPassatoProssimo?: boolean;
       regularFuturoSemplice?: boolean;
+      regularImperfetto?: boolean;
     };
   };
 }
@@ -132,6 +139,30 @@ function LessonDialog({
         );
       } else {
         return getGeneralFuturoSempliceLesson();
+      }
+    }
+
+    // Imperfetto
+    if (tense === "imperfetto" && mood === "indicativo") {
+      if (hasConjugations) {
+        const isIrregular = currentVerb.metadata.regularImperfetto === false;
+        return getImperfettoLesson(
+          {
+            infinitive: currentVerb.infinitive,
+            definition: currentVerb.definition,
+            conjugations: {
+              io: currentVerb.conjugation!.io!,
+              tu: currentVerb.conjugation!.tu!,
+              luiLei: currentVerb.conjugation!.luiLei!,
+              noi: currentVerb.conjugation!.noi!,
+              voi: currentVerb.conjugation!.voi!,
+              loro: currentVerb.conjugation!.loro!,
+            },
+          },
+          isIrregular
+        );
+      } else {
+        return getGeneralImperfettoLesson();
       }
     }
 
