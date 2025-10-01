@@ -19,8 +19,18 @@ import {
   getVerbTreeLearningTips as getFuturoTips,
   type VerbTreeData as FuturoTreeData,
 } from "./content/futuro-semplice/tree";
+import {
+  getImperfettoTree,
+  getDefaultImperfettoTree,
+  getVerbTreeLearningTips as getImperfettoTips,
+  type VerbTreeData as ImperfettoTreeData,
+} from "./content/imperfetto/tree";
 
-type VerbTreeData = PresenteTreeData | PassatoTreeData | FuturoTreeData;
+type VerbTreeData =
+  | PresenteTreeData
+  | PassatoTreeData
+  | FuturoTreeData
+  | ImperfettoTreeData;
 
 interface VerbTreeGraphDialogProps {
   isOpen: boolean;
@@ -44,6 +54,7 @@ interface VerbTreeGraphDialogProps {
       regularPresenteIndicativo?: boolean;
       regularPassatoProssimo?: boolean;
       regularFuturoSemplice?: boolean;
+      regularImperfetto?: boolean;
     };
   };
 }
@@ -139,6 +150,29 @@ function VerbTreeGraphDialog({
       );
     }
 
+    // Imperfetto
+    if (tense === "imperfetto") {
+      if (hasConjugations) {
+        const isIrregular = currentVerb.metadata.regularImperfetto === false;
+        return getImperfettoTree(
+          {
+            infinitive: currentVerb.infinitive,
+            definition: currentVerb.definition,
+          },
+          {
+            io: currentVerb.conjugation!.io!,
+            tu: currentVerb.conjugation!.tu!,
+            luiLei: currentVerb.conjugation!.luiLei!,
+            noi: currentVerb.conjugation!.noi!,
+            voi: currentVerb.conjugation!.voi!,
+            loro: currentVerb.conjugation!.loro!,
+          },
+          isIrregular
+        );
+      }
+      return getDefaultImperfettoTree();
+    }
+
     // Default fallback
     return getDefaultPresenteIndicativoTree(
       verbType as "are" | "ere" | "ire",
@@ -159,6 +193,8 @@ function VerbTreeGraphDialog({
         )
       : tense === "futuro-semplice"
       ? getFuturoTips(verbData.isIrregular, verbData.stem, verbType)
+      : tense === "imperfetto"
+      ? getImperfettoTips(verbType as "are" | "ere" | "ire", verbData.isIrregular)
       : getPresenteTips(verbData.isIrregular, verbData.stem, verbType);
 
   return (
