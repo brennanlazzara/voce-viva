@@ -21,14 +21,6 @@ export default function ChatBot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
@@ -203,8 +195,8 @@ export default function ChatBot() {
             </button>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-            💡 Try asking: &quot;How do I conjugate essere?&quot; or &quot;Translate: I love
-            learning Italian&quot;
+            💡 Try asking: &quot;How do I conjugate essere?&quot; or
+            &quot;Translate: I love learning Italian&quot;
           </p>
         </div>
       </div>
