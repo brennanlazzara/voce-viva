@@ -2,6 +2,7 @@
 
 import VerbPracticeCard from "../components/VerbPracticeCard";
 import IrregularVerbPracticeCard from "../components/IrregularVerbPracticeCard";
+import ChatBot from "../components/ChatBot";
 import { useState, useEffect } from "react";
 import { usePhraseData } from "../hooks/usePhraseData";
 
@@ -45,8 +46,13 @@ export default function Home() {
           </div>
           <p className="text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Your living voice in Italian - Master verb conjugations with
-            interactive exercises and beautiful learning tools
+            interactive exercises, AI-powered tutoring, and beautiful learning tools
           </p>
+        </div>
+
+        {/* AI Tutor Section */}
+        <div className="mb-12">
+          <ChatBot />
         </div>
 
         {/* Tense Selector */}
